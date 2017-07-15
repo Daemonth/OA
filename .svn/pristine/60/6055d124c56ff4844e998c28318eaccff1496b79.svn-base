@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="47fe3be3-15b9-42f2-81fa-614c8a90ae8c" name="oa" url="http://192.168.100.20">
+        <fileTransfer host="192.168.100.20" port="22" rootFolder="/var/www/devbox" accessType="SFTP" password="dfdddfcfdfc4df92df99df92df9edf92df9bdf9edf9cdf9e" username="songzhiwen">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

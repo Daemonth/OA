@@ -1,0 +1,2 @@
+2016-04-11 09:49:20 ERR (3): user表插入数据出错,Statement could not be executed (23000 - 1062 - Duplicate entry '477' for key 'employeeId')
+2016-04-11 09:51:09 ERR (3): userinfo表插入数据出错,Statement could not be executed (23000 - 1048 - Column 'name' cannot be null)

@@ -1,0 +1,65 @@
+
+<center><h4><b>原始信息</b></h4></center>
+
+<div>
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'origin','action'=>'index'));?>" method="get">
+       起始时间： <input type="text" readonly  class = 'date' name="start"  value="<?php echo empty($formInfo['start'])?null:$formInfo['start'];?>">
+        结束时间：<input type="text" readonly  class = 'date' name="end"  value="<?php echo empty($formInfo['end'])?null:$formInfo['end'];?>">
+        姓名：<input type="text" name="name" size="10" value="<?php echo empty($formInfo['name'])?null:$formInfo['name'];?>">
+        <input type="submit" value="查询" class="btn btn-success ">
+    </form>
+</div>
+
+<div class="table-responsive page" >
+   
+    <table class="table table-striped b-t b-light">
+         <thead>
+            <tr>
+                
+<!--                <th>编号</th>-->
+                <th >考勤日期</th>
+                <th >考勤编号</th>                
+                <th>姓名</th>
+                <th>部门</th>
+                <th>打印方式</th>
+                <th>打卡时间</th>
+                <th>使用设备</th>
+                <th>设备序列号</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) {
+                         foreach ($infos as $k=>$v): ?>
+                <tr>
+<!--                <td><?php //echo $v->id;?></td>-->
+                <td><?php echo $v->printdate;?></td>
+                <td><?php echo $v->attendId;?></td>
+                <td><?php echo $v->name;?></td>
+                <td><?php echo $v->depart;?></td>
+                <td><?php echo $v->printway;?></td>
+                <td><?php echo $v->time;?></td>
+                <td><?php echo $v->device;?></td>
+                <td><?php echo $v->devicesuq;?></td>
+                
+               
+                </tr>
+                
+           <?php        endforeach; } ?>
+           
+        </tbody>
+    </table>
+       <br>
+ 
+   
+    
+</div>
+<?php
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'origin','action'=>'index','formInfo'=>$formInfo)
+                    );
+    ?>
+
+

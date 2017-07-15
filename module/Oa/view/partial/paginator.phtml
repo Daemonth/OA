@@ -1,0 +1,66 @@
+<?php if ($this->pageCount):
+    //提交数据带参数
+//    $starttime = !empty($formInfo['starttime']) ? 'starttime='.$formInfo['starttime']:null;
+//    $endtime = !empty($formInfo['endtime']) ? '&endtime='.$formInfo['endtime']:null;
+//    $name = !empty($formInfo['name']) ? 'name='.$formInfo['name']:null;
+//    $params = empty($formInfo) ? null : "?".$starttime.$endtime;
+//    $params .= empty($params) ? empty($name) ? null:'?'.$name : empty($name) ? null:'&'.$name;
+      if(!empty($formInfo)) {
+          $params = '?';
+          foreach($formInfo as $key=>$value) {
+              $params .=$key.'='.$value.'&';
+          }
+          $params = substr($params,0,strlen($params)-1);
+      } else {
+          $params = null;
+      }
+    ?>
+<div style="margin-left:20px;display: inline;float:right">
+         <ul class="pagination">
+             <!-- Previous page link -->
+             <?php if (isset($this->previous)): ?>
+                 <li>
+                     <a href="<?php echo $this->url($this->route, array('controller'=>$controller,'action' => $action, 'id' => $this->previous)),$params; ?>">
+                         <<
+                     </a>
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="#">
+                         <<
+                     </a>
+                 </li>
+             <?php endif; ?>
+
+             <!-- Numbered page links -->
+             <?php foreach ($this->pagesInRange as $page): ?>
+                 <?php if ($page != $this->current): ?>
+                     <li>
+                         <a href="<?php echo  $this->url($this->route, array('controller'=>$controller,'action' => $action, 'id' => $page)),$params;?>">
+                             <?php echo $page; ?>
+                         </a>
+                     </li>
+                 <?php else: ?>
+                     <li class="active">
+                         <a href="#"><?php echo $page; ?></a>
+                     </li>
+                 <?php endif; ?>
+             <?php endforeach; ?>
+
+             <!-- Next page link -->
+             <?php if (isset($this->next)): ?>
+                 <li>
+                     <a href="<?php echo $this->url($this->route, array('controller'=>$controller,'action' => $action, 'id' => $this->next)),$params; ?>">
+                         >>
+                     </a>
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="#">
+                         >>
+                     </a>
+                 </li>
+             <?php endif; ?>
+         </ul>
+     </div>
+ <?php endif; ?>

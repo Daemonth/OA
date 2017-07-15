@@ -1,0 +1,63 @@
+
+
+<div class="form-group">
+    <br>
+    <br>
+     <?php
+        $form = $this->form;  
+        $form->setAttribute('action',$this->url('oa/default',array('controller'=>'rule','action'=>'update','id'=>$id)));
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        ?>
+    <h3><label class="col-sm-2 control-label">时间规则修改</label> </h3>
+    <div class="col-sm-5">
+        <?php echo $this->formHidden($form->get('id'));?>
+        <div class="input-group m-b">
+            <span class="input-group-addon">开始时间</span>
+           <?php echo $this->formElement($form->get('starttime')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">结束时间</span>
+         <?php echo $this->formElement($form->get('endtime')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">简称</span>
+            <?php echo $this->formElement($form->get('short')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">描述</span>
+            <?php echo $this->formElement($form->get('description')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        
+        <div >
+            <label class="col-sm-4 control-label">类型选择</label>
+             <?php echo $this->formSelect($form->get('type'));?>
+        </div>
+       
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+        <div class="error">
+            *凌晨3:00:00的数据如果修改，需要同时修改配置文件，否则出现数据不对应
+        </div>
+       <?php
+            $this->formElementErrors()
+                ->setMessageOpenFormat('<ul class="error"><li>')
+                ->setMessageSeparatorString('</li><li>')
+                ->setMessageCloseString('</li></ul>');
+            echo $this->formElementErrors($form->get('starttime'));
+            echo $this->formElementErrors($form->get('endtime'));
+            
+            
+            ?>
+       
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
+
+</div>

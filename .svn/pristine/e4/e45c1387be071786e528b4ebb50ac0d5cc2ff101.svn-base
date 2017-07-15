@@ -1,0 +1,74 @@
+
+<h3><label class="col-sm-2 control-label">添加登录用户</label> </h3>
+<div class="form-group">
+    <br>
+    <br>
+    <input type="hidden" class="js_id" value="0">
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action',$this->url('oa/default',array('controller'=>'user','action'=>'add')));
+    $form->setAttribute('onsubmit','return checkSubmit()');
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    ?>
+
+    <div class="col-sm-5">
+        <div class="input-group m-b">
+            <span class="input-group-addon">员工号</span>
+            <?php echo $this->formElement($form->get('employeeId')->setAttributes(array('class'=>'form-control js_employeeId','required'=>'required')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">邮箱</span>
+            <?php echo $this->formElement($form->get('email')->setAttributes(array('class'=>'form-control js_email','required'=>'required')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">密码</span>
+            <?php echo $this->formElement($form->get('password')->setAttributes(array('class'=>'form-control ','required'=>'required')));?>
+        </div>
+
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">姓名</span>
+            <?php echo $this->formElement($form->get('name')->setAttributes(array('class'=>'form-control ','required'=>'required')));?>
+        </div>
+
+
+
+        <div >
+            <label class="col-sm-4 control-label">角色</label>
+            <?php echo $this->formSelect($form->get('role'));?>
+        </div>
+
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+        <div class="error">
+           * 员工号，邮箱，姓名，密码为必填项
+        </div>
+        <br/>
+        <div id="showError" class="error">
+            <?php if(!empty($_GET['errorMessage'])) {
+                echo $_GET['errorMessage'];
+            }
+            ?>
+        </div>
+ <?php
+            $this->formElementErrors()
+                ->setMessageOpenFormat('<ul class="error"><li>')
+                ->setMessageSeparatorString('</li><li>')
+                ->setMessageCloseString('</li></ul>');
+            echo $this->formElementErrors($form->get('employeeId'));
+            echo $this->formElementErrors($form->get('email'));
+            echo $this->formElementErrors($form->get('name'));
+            echo $this->formElementErrors($form->get('password'));
+            ?>
+
+        <?php echo $this->form()->closeTag(); ?>
+        
+    </div>
+    
+</div>
+<script type="text/javascript" src="/js/custom/employee.js"></script>
+

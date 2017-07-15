@@ -1,0 +1,533 @@
+<?php
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ */
+
+namespace Oa\Controller;
+
+use Oa\Form\UserForm;
+use Oa\Model\Record;
+use Oa\Model\User;
+use Zend\Authentication\Adapter\DbTable;
+use Zend\Db\Sql;
+use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Select;
+use Zend\Form\FormInterface;
+use Zend\Session\Storage\SessionStorage;
+use Zend\View\Model\ViewModel;
+use Oa\Exception\ErrorException;
+class UserController extends BaseController
+{
+
+
+    //登录用户信息列表
+    public function indexAction()
+    {
+
+        $pagenum = (int)$this->params()->fromRoute('id', 1);
+
+        $name = !empty($_GET['name']) ? $_GET['name'] : null;
+        $employeeId = empty($_GET['employeeId']) ? null : $_GET['employeeId'];
+        $w = array();
+        if (!is_null($name)) {
+            $where = array('name' => $name);
+            array_push($w, $where);
+        } elseif (strlen($employeeId) > 0) {
+            $where = array('employeeId' => $employeeId);
+            array_push($w, $where);
+        }
+        $paginator = $this->common->getUserTable()->getPaginator($w, null);
+        $paginator->setCurrentPageNumber($pagenum);
+        $paginator->setItemCountPerPage(8);
+        return new ViewModel(array(
+            'infos' => $paginator,
+            'num' => $pagenum
+        ));
+    }
+
+    //普通用户查询个人考勤信息
+    public function searchAction()
+    {
+        $where = array();
+        $pagenum = (int)$this->params()->fromRoute('id', 1);
+        $formInfo = array();
+        $employeeId = $_SESSION['Zend_Auth']->storage->employeeId;
+        $in = new Where();
+        //类型
+        if (isset($_GET['type']) && $_GET['type'] == 3) {
+            //事假及未签到
+            $inOr = new Where();
+            $inOr->in('updateType1', array('E', 'emp'));
+            $inOr->or->in('updateType2', array('emp'));
+            $in->addPredicate($inOr);
+            array_push($where, $in);
+            $formInfo['type'] = 3;
+        } else if (isset($_GET['type']) && $_GET['type'] == 2) {
+            //全部
+            $formInfo['type'] = 2;
+        } else {
+            //迟到及早退
+            $in->in('updateType1', array('B', 'C', 'D', 'F'));
+            array_push($where, $in);
+            $formInfo['type'] = 1;
+        }
+        if (isset($_GET['starttime']) && strlen($_GET['starttime'] > 0 && isset($_GET['endtime']) && strlen($_GET['endtime']) > 0)) {
+
+            $in->between('signdate', $_GET['starttime'], $_GET['endtime']);
+            array_push($where, $in);
+            $formInfo['starttime'] = $_GET['starttime'];
+            $formInfo['endtime'] = $_GET['endtime'];
+        }
+
+        if (empty($formInfo['type'])) {
+            $formInfo['type'] = 2;
+        }
+        $order = 'signdate desc';
+        array_push($where, array('employeeId' => $employeeId));
+        $paginator = $this->common->getRecordTable()->getPaginator($where, $order);
+        $paginator->setCurrentPageNumber($pagenum);
+        $paginator->setItemCountPerPage(30);
+        $count = array('late1' => 0, 'late2' => 0, 'late3' => 0);
+
+        foreach ($paginator as $key => $value) {
+            if ($value->updateType1 == 'B') {
+                $count['late1']++;
+            } else if ($value->updateType1 == 'C') {
+                $count['late2']++;
+            } else if ($value->updateType1 == 'D') {
+                $count['late3']++;
+            }
+
+        }
+
+        $typeinfos = $this->common->getRuleTable()->fetchAll()->toArray();
+       // $typeinfos = array_column($typeinfos, null, 'typeDesc');
+        $typeinfos = $this->common->array_column($typeinfos,null,'typeDesc');
+
+        $user = $this->common->getUserTable()->fetchAll()->toArray();
+        $user = $this->common->array_column($user, null, 'employeeId');
+        $fixValue = array('em' => '无记录', 'emp' => '未打卡', '00' => '数据异常', 'sun' => '周日值守', '01' => '法定假日1', '02' => '法定假日2', "A11" => '法定假日0.5', '01H' => '0.5法定假日加班1', '01I' => '0.5法定假日加班2');
+        return new ViewModel(array(
+            'infos' => $paginator,
+            'typeinfos' => $typeinfos,
+            'count' => $count,
+            'formInfo' => $formInfo,
+            'user' => $user,
+            'fixValue' => $fixValue
+        ));
+    }
+
+
+    //用户登录
+    public function loginAction()
+    {
+        //已经登录，跳到首页
+        if (!empty($_SESSION['Zend_Auth'])) {
+            return $this->redirect()->toRoute('oa/default', array('controller' => 'index', 'action' => 'index'));
+        }
+        $form = new UserForm();
+        $message = null;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $pattern = '/^\w+(@weiboyi.com)$/';
+            if (empty($email) || empty($password) || !preg_match($pattern, $email)) {
+                if (empty($email))
+                    $message = '用户名不能为空';
+                elseif (empty($password))
+                    $message = '密码不能为空';
+                elseif (!preg_match($pattern, $email))
+                    $message = '邮箱格式不对';
+                $view = new ViewModel();
+                $view->setTerminal(true);
+                $view->form = $form;
+                $view->message = $message;
+                return $view;
+            }
+            //验证
+            $authAdapter = new DbTable($this->getAdapter(), null, null, null, 'md5(?)');
+            $authAdapter->setTableName('user')
+                ->setIdentityColumn('email')
+                ->setCredentialColumn('password')
+                ->setIdentity($email)
+                ->setCredential($password);
+
+            $result = $authAdapter->authenticate();
+
+            if ($result->isValid()) {
+
+                $session = new \Zend\Authentication\AuthenticationService();
+                $userInfo = $authAdapter->getResultRowObject(null, 'password');
+                $session->getStorage()->write($userInfo);
+
+                //初次登录修改密码
+                if ($userInfo->initlogin == 1) {
+                    return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'updatepwd'));
+                }
+
+                return $this->redirect()->toRoute('oa/default', array('controller' => 'index', 'action' => 'index'));
+            } else {
+                $message = '用户名或密码错误';
+            }
+
+        }
+        $view = new ViewModel();
+        $view->setTerminal(true);
+        $view->form = $form;
+        $view->message = $message;
+        return $view;
+    }
+
+    //修改登录用户信息
+    public function updateAction()
+    {
+        $id = (int)$this->params()->fromRoute('id', 0);
+        $form = new UserForm();
+        $form->get('submit')->setAttribute('value', '修改');
+        if ($id) {
+            $entity = $this->common->getUserTable()->fetchOne(array('id' => $id));
+            $form->bind($entity);
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $form->setInputFilter($entity->getInputFilter());
+                $form->setData($request->getPost());
+
+                if (strlen($request->getPost('password')) > 0) {
+                    $validationGroup = array('id', 'name', 'employeeId', 'email', 'password', 'role');
+                } else {
+                    $validationGroup = array('id', 'name', 'employeeId', 'email', 'role');
+                }
+                $form->setValidationGroup($validationGroup);
+
+                if ($form->isValid()) {
+
+                    $data = $form->getData(FormInterface::VALUES_AS_ARRAY);
+                    $entityId = $data['id'];
+                    unset($data['id']);
+
+                    if (!empty($data['password'])) {
+                        $data['password'] = md5($data['password']);
+                    }
+                    try {
+                        $this->common->getUserTable()->update($data, array('id' => $entityId));
+                    }catch(\Exception $e){
+
+                       return  $this->redirect()->toUrl('/user/update/'.$id.'?errorMessage=*对不起，您输入的信息有误，请重新输入!');
+                    }
+                    return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'index'));
+
+
+                }
+            }
+
+            return array('form' => $form, 'id' => $id);
+        }
+
+        $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'index'));
+    }
+
+    //初次登录修改密码
+    public function updatepwdAction()
+    {
+        $message = null;
+        if ($this->getRequest()->isPost()) {
+            $pattern = '/^\w+$/i';
+            $pwd1 = $_POST['pwd1'];
+            $pwd2 = $_POST['pwd2'];
+
+            if ($pwd1 != $pwd2) {
+                $message = '两次密码输入不匹配';
+            } else if (strlen($pwd1) < 6) {
+                $message = '密码长度不能小于6';
+            } else if (!preg_match($pattern, $pwd1)) {
+                $message = '密码只能包含数字,字母,下划线';
+            } else {
+
+                $employeeId = $_SESSION['Zend_Auth']->storage->employeeId;
+                $userRow = $this->common->getUserTable()->fetchOne(array('employeeId' => $employeeId));
+                $userRow->password = md5($pwd1);
+                $userRow->initlogin = 2;
+                $this->common->getUserTable()->saveAs($userRow);
+                //修改成功跳转到首页
+                $this->redirect()->toRoute('oa/default', array('controller' => 'index', 'action' => 'index'));
+            }
+
+        }
+        $view = new ViewModel();
+        $view->setTerminal(true);
+        $view->message = $message;
+        return $view;
+    }
+
+
+    public function addAction()
+    {
+        $form = new UserForm();
+        $form->get('submit')->setAttribute('value', '提交');
+        if ($this->getRequest()->isPost()) {
+            $en = new User();
+            $form->setInputFilter($en->getInputFilter());
+            $form->setData($this->getRequest()->getPost());
+            if ($form->isValid()) {
+                $en->exchangeArray($form->getData(), FormInterface::VALUES_AS_ARRAY);
+                $en->initlogin = 1;
+                $en->password = md5($en->password);
+                try {
+                    if ($this->common->getUserTable()->saveAs($en)) {
+                        return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'index'));
+                    }
+                }catch(\Exception $e)
+                {
+                    return $this->redirect()->toUrl('/user/add?errorMessage=对不起，您输入的信息有误，请重新输入！');
+                }
+            }
+        }
+
+
+        return array('form' => $form);
+    }
+
+    //忘记密码
+    public function forgetAction()
+    {
+
+        $view = new ViewModel();
+        $view->setTerminal(true);
+        $message = null;
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $pattern = '/^\w+(@weiboyi.com)$/';
+            $email = $_POST['email'];
+            if (!preg_match($pattern, $email)) {
+                $message = '邮箱格式不正确';
+            } else {
+                $userRow = $this->common->getUserTable()->fetchOne(array('email' => $email));
+                if (!$userRow) {
+                    $message = '该邮箱不存在';
+                    $view->message = $message;
+                    return $view;
+                }
+
+                $str = $this->common->getRandom(32);
+                $userRow->validate = $str;
+                $this->common->getUserTable()->saveAs($userRow);
+                $mailConfig = $this->getServiceLocator()->get('config');
+                $mailConfig = $mailConfig['zend_mail'];
+                $url = $this->getEvent()->getRouter()->assemble(array('controller' => 'user', 'action' => 'validate'), array('name' => 'oa/default'));
+
+                //$url = 'http://'.$_SERVER['HTTP_HOST'].$url.'?validate='.$str.'&id='.$userRow->id;
+                $url = DOMAIN . $url . '?validate=' . $str . '&id=' . $userRow->id;
+
+                $mail = new \Zend\Mail\Message();
+
+                $body = "此为微播易考勤系统发出的邮件，点击链接验证找回密码<b><a  target='_blank' href='$url'> 点击找回密码</a></b> ,如果不是您进行的操作，请忽略该邮件，谢谢！";
+                $html = new \Zend\Mime\Part($body);
+                $html->type = 'text/html';
+                $mimiMessage = new \Zend\Mime\Message();
+                $mimiMessage->setParts(array($html));
+                $mail->setEncoding('UTF-8')
+                    ->setBody($mimiMessage)
+                    ->setFrom($mailConfig['from'], $mailConfig['fromName'])
+                    ->setTo($email, $userRow->name)
+                    ->setSubject('微播易考勤系统');
+                $transport = new \Zend\Mail\Transport\Smtp();
+                $options = new \Zend\Mail\Transport\SmtpOptions(array(
+                    'name' => $mailConfig['name'],
+                    'host' => $mailConfig['host'],
+                    'port' => 25,
+                    'connection_class' => 'login',
+                    'connection_config' => array(
+                        'username' => $mailConfig['username'],
+                        'password' => $mailConfig['password'],
+                    ),
+                ));
+                $transport->setOptions($options);
+                $transport->send($mail);
+                $message = "<a href='http://mm.263.net' target='_blank'><span style='color:red'>去登录邮箱</span></a>";
+            }
+
+        }
+        $view->message = $message;
+        return $view;
+    }
+
+    //删除所选
+    public function deleteAction()
+    {
+        $ids = $_POST['post'];
+        $pagenum = (int)$this->params()->fromRoute('id', 1);
+        $where = new Where();
+        $where->in('id', $ids);
+        $this->common->getUserTable()->delete($where);
+        return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'index', 'id' => $pagenum));
+    }
+
+    //注销登录
+    public function logoutAction()
+    {
+        unset($_SESSION['Zend_Auth']);
+        return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'login'));
+
+    }
+
+    //找回密码点击链接处理
+    public function validateAction()
+    {
+        $validate = $_GET['validate'];
+        $id = (int)$_GET['id'];
+        if ($id) {
+            $userRow = $this->common->getUserTable()->fetchOne(array('id' => $id));
+            if ($userRow->validate == $validate) {
+                $_SESSION['validate'] = $validate;
+                return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'newpwd', 'id' => $userRow->id));
+            }
+        }
+        return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'login'));
+
+    }
+
+    //忘记密码设置新密码
+    public function newpwdAction()
+    {
+        $message = null;
+        $id = $this->params()->fromRoute('id', 0);
+
+        if (empty($_SESSION['validate']) || !$id) {
+            return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'login'));
+        }
+        if ($this->getRequest()->isPost()) {
+            $pattern = '/^\w+$/i';
+            $pwd1 = $_POST['pwd1'];
+            $pwd2 = $_POST['pwd2'];
+
+            if ($pwd1 != $pwd2) {
+                $message = '两次密码输入不匹配';
+            } else if (strlen($pwd1) < 6) {
+                $message = '密码长度不能小于6';
+            } else if (!preg_match($pattern, $pwd1)) {
+                $message = '密码只能包含数字,字母,下划线';
+            } else {
+
+                $userRow = $this->common->getUserTable()->fetchOne(array('id' => $id));
+                $userRow->password = md5($pwd1);
+                $this->common->getUserTable()->saveAs($userRow);
+                //修改成功跳转到登录页面
+                unset($_SESSION['validate']);
+                $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'login'));
+            }
+
+        }
+        $view = new ViewModel();
+        $view->setTerminal(true);
+        $view->message = $message;
+        $view->id = $id;
+        return $view;
+    }
+
+    //上传信息表单页面
+    public function uploadAction()
+    {
+        return new ViewModel();
+    }
+
+    //查询汇总
+    public function summaryAction()
+    {
+        $pagenum = (int)$this->params()->fromRoute('id', 1);
+        $employeeId = $_SESSION['Zend_Auth']->storage->employeeId;
+        $where = array();
+        $order = ('month desc');
+        array_push($where, array('employeeId' => $employeeId));
+        $paginator = $this->common->getReportTable()->getPaginator($where, $order);
+        $paginator->setCurrentPageNumber($pagenum);
+        $paginator->setItemCountPerPage(30);
+        return new ViewModel(array(
+            'infos' => $paginator,
+
+        ));
+
+
+    }
+//检查是否已经存在员工号
+    public function existemployeeAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $type = $_POST['type'];
+            $employeeId = $_POST['employeeId'];
+            if ($type == 1) {
+                $id = $_POST['id'];
+                $w = array();
+                $where = new Where();
+                $where->equalTo('employeeId', $employeeId);
+                $where->notEqualTo('id', $id);
+                $w[0] = $where;
+                $row = $this->common->getUserTable()->fetchOne($w);
+
+                if ($row) {
+                    echo 'fail';
+                    die();
+                }
+                echo 'ok';
+                die();
+            }elseif($type ==2) {
+                $w = array();
+                $where = new Where();
+                $where->equalTo('employeeId', $employeeId);
+                $w[0] = $where;
+                $row = $this->common->getUserTable()->fetchOne($w);
+                if ($row) {
+                    echo 'fail';
+                    die();
+                }
+                echo 'ok';
+                die();
+            }
+        }
+    }
+    //验证邮箱是否存在
+        public function existemailAction()
+    {
+        if($this->getRequest()->isPost())
+        {
+            $type = $_POST['type'];
+            $email = $_POST['email'];
+            if($type == 1)
+            {
+                $id = $_POST['id'];
+                $w = array();
+                $where = new Where();
+                $where->equalTo('email',$email);
+                $where->notEqualTo('id',$id);
+                $w[0] = $where;
+                $row = $this->common->getUserTable()->fetchOne($w);
+                if($row){
+                    echo 'fail';
+                    die();
+                }
+                echo 'ok';
+                die();
+            }elseif($type==2)
+            {
+                $w = array();
+                $where = new Where();
+                $where->equalTo('email',$email);
+                $w[0] = $where;
+                $row = $this->common->getUserTable()->fetchOne($w);
+                if($row){
+                    echo 'fail';
+                    die();
+                }
+                echo 'ok';
+                die();
+            }
+        }
+
+    }
+
+}

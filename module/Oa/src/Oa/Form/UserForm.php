@@ -1,0 +1,78 @@
+<?php
+
+namespace Oa\Form;
+
+use Zend\Form\Form;
+
+class UserForm extends Form
+{
+    //登录用户表单
+    public function __construct($name = null) {
+        parent::__construct('user');
+
+        $this->add(array(
+            'name'=>'employeeId',
+            'type'=>'text',
+            'attributes'=>array(
+                'maxlength'=>10,
+        ),
+        ));
+        $this->add(array(
+            'name'=>'id',
+            'type'=>'hidden',
+            'attributes'=>array(
+                'maxlength'=>10,
+            ),
+        ));
+        $this->add(array(
+            'name'=>'email',
+            'type'=>'text',
+            'attributes'=>array(
+                'maxlength'=>30,
+            ),
+        ));
+        $this->add(array(
+            'name'=>'password',
+            'type'=>'Zend\Form\Element\Password',
+            'attributes'=>array(
+                'maxlength'=>30,
+                'required'=>false,
+            ),
+            'options'=>
+                array('messages'=>'abc')
+
+        ));
+        $this->add(array(
+            'name'=>'name',
+            'type'=>'text',
+        ));
+        $this->add(array(
+            'type'=>'Zend\Form\Element\Select',
+            'name'=>'role',
+
+            'options'=>array(
+                'label'=>'角色',
+                'value_options' =>array(
+                    '1'=>'普通员工',
+                    '2'=>'管理员',
+                    '3'=>'保洁员',
+                    '4'=>'晚值勤人员',
+                    '5'=>'实习生'
+                ),
+            ),
+        ));
+                
+        
+         $this->add(array(
+             'name' => 'submit',
+             'type' => 'Submit',
+             'attributes' => array(
+                 'value' => 'Go',
+                 'id' => 'submitbutton',
+             ),
+         ));
+    }
+}
+    
+
+

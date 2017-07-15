@@ -1,0 +1,147 @@
+
+<?php
+$this->headTitle('修改汇总信息');
+
+?>
+<center><h4><label >汇总信息修改</label> </h4></center>
+<br>
+<div class="form-group " style="overflow: auto;height: 500px;border: solid 2px blue">
+<br>
+     <?php
+        $form = $this->form;
+
+        $form->setAttribute('action',$this->url('oa/default',array('controller'=>'report','action'=>'update','id'=>$form->get('id')->getValue())));
+
+        $form->get('submit')->setValue('修改');
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        ?>
+
+    <div class="col-sm-3 " >
+        <div class="input-group m-b ">
+            <span class="input-group-addon">工作日</span>
+           <?php echo $this->formElement($form->get('workdays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b ">
+            <span class="input-group-addon">实际工作日</span>
+         <?php echo $this->formElement($form->get('logicdays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">工作日公出</span>
+            <?php echo $this->formElement($form->get('workaway')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">迟到1</span>
+            <?php echo $this->formElement($form->get('late1')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">迟到2</span>
+            <?php echo $this->formElement($form->get('late2')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">早退</span>
+            <?php echo $this->formElement($form->get('leavely')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">法定假日1</span>
+            <?php echo $this->formElement($form->get('vacation1')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">法定假日2</span>
+            <?php echo $this->formElement($form->get('vacation2')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">周末加班</span>
+            <?php echo $this->formElement($form->get('weekendwork')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">周末公出</span>
+            <?php echo $this->formElement($form->get('weekendaway')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">全勤奖</span>
+            <?php echo $this->formElement($form->get('bonus')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">加班1</span>
+            <?php echo $this->formElement($form->get('overtime1')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">加班2</span>
+            <?php echo $this->formElement($form->get('overtime2')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">总加班费</span>
+            <?php echo $this->formElement($form->get('total')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">工作日公出+周末公出</span>
+            <?php echo $this->formElement($form->get('outdays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">事假</span>
+            <?php echo $this->formElement($form->get('eventdays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+        <div class="input-group m-b">
+            <span class="input-group-addon">年假</span>
+            <?php echo $this->formElement($form->get('yeardays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">婚假</span>
+            <?php echo $this->formElement($form->get('marrydays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">产假</span>
+            <?php echo $this->formElement($form->get('maternitydays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">病假</span>
+            <?php echo $this->formElement($form->get('sickdays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">丧假</span>
+            <?php echo $this->formElement($form->get('funeraldays')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">描述1</span>
+            <?php echo $this->formElement($form->get('desc1')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">描述2</span>
+            <?php echo $this->formElement($form->get('desc2')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">描述3</span>
+            <?php echo $this->formElement($form->get('desc3')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+       
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+       
+       
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
+</div>

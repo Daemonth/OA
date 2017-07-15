@@ -1,0 +1,1 @@
+2016-05-04 14:58:40 ERR (3): userinfo表插入数据出错,Statement could not be executed (23000 - 1048 - Column 'employeeId' cannot be null)

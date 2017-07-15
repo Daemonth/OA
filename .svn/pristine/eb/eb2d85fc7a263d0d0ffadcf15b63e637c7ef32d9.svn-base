@@ -1,0 +1,299 @@
+<center><h4><b>员工考勤信息</b></h4></center>
+<div class="custome-margin" style="margin-bottom: 10px">
+    
+
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'index'));?>" method="get">
+        起始时间：<input type="text" name="starttime" readonly  class = 'date'
+ <?php if(!empty($formInfo['starttime'])) echo "value=".$formInfo['starttime']; ?> >&nbsp;&nbsp;
+        结束时间：<input type="text"  name="endtime" readonly  class = 'date'
+                 <?php if(!empty($formInfo['endtime'])) echo "value=".$formInfo['endtime']; ?> >
+        姓名：<input type="text" name="name" size="7" <?php if(!empty($formInfo['name'])) echo "value=".$formInfo['name']; ?> >
+        员工号：<input type="text" name="employeeId" size="7" <?php if(!empty($formInfo['employeeId'])) echo "value=".$formInfo['employeeId']; ?> >
+        类型：<select name="type" >
+            <option value="1" <?php echo (!empty($formInfo['type']) && $formInfo['type']==1) ? 'selected=selected':null;?> >迟到及早退</option>
+            <option value="3" <?php echo (!empty($formInfo['type']) && $formInfo['type']==3) ? 'selected=selected':null;?> >请假及未打卡</option>
+            <option value="2" <?php echo (!empty($formInfo['type']) && $formInfo['type']==2) ? 'selected=selected':null;?> >全部</option>
+           
+        </select>
+        <input type="submit" value="查询" class="btn btn-info">
+    </form>
+     
+</div>
+
+<?php
+
+//提交数据带参数
+            if(!empty($formInfo)) {
+          $params = '?';
+          foreach($formInfo as $key=>$value) {
+              $params .=$key.'='.$value.'&';
+          }
+          $params = substr($params,0,strlen($params)-1);
+             } else {
+          $params = null;
+             }
+        $params .= empty($params) ? empty($name) ? null:'?'.$name : empty($name) ? null:'&'.$name;
+?>
+ <form action="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'delete','id'=>$num)).$params;?>" method="post" >
+<div class="table-responsive custome-margin page">
+   
+    <table class="table table-striped b-t b-light " id="record">
+        <div>
+       <thead >
+            <tr>
+                <th ><input type="checkbox" ></th>
+<!--                <th >员工编号</th>-->
+                <th>姓名</th>
+                <th >考勤日期</th>
+                <th >签到时间</th>
+                <th>初始</th>
+                <th>更新</th>
+                <th >签退时间</th>
+                <th >初始</th>
+                <th >更新</th>
+                <th >时间 </th>
+                <th >备注</th>
+                <th >修改</th>
+<!--                <th >删除</th>-->
+            </tr>
+        </thead>
+            </div>
+        <tbody >
+            <?php if(!empty($infos)) {
+                 $i = 0;
+                 $keys = array_keys($typeinfos);
+                         foreach ($infos as $k=>$v): 
+                              ?>
+                <tr>
+                <td width="60px"><input type="checkbox" name="post[]" value="<?php echo $v->id;?>"></td>
+<!--                <td >--><?php //echo $v->employeeId;?><!--</td>-->
+                <td ><?php echo $v->name;?></td>
+                <td><?php echo $v->signdate;?></td>
+                <td><?php echo $v->time1;?></td>
+                <td><?php
+
+
+                    if(in_array($v->time1Type,$keys,true))
+                    {
+                        echo $typeinfos[$v->time1Type]['short'];
+                    }else {
+                        foreach($fixValue as $key=>$item)
+                        {
+                            if($v->time1Type == $key)
+                            {
+                                echo $item;
+                            }
+                        }
+                    }
+
+                    ?>
+                </td>
+                    <td><?php
+                        $role = $user[$v->employeeId]['role'];
+                        if(($role == 1 || $role == 2) && $v->daytype == 1)
+                        {
+                            $typeArr = array('A','B','C','D','E');
+                        }elseif(($role == 1 || $role == 2) && $v->daytype == 2)
+                        {
+                            $typeArr = array('J','K');
+                        }elseif($role == 3 && $v->daytype == 1)
+                        {
+                            $typeArr = array('O');
+                        }elseif($role == 3 && $v->daytype == 2)
+                        {
+                            $typeArr = array('Q');
+                        }elseif($role == 4 )
+                        {
+                            $typeArr = array('S');
+                        }
+                        ?>
+
+                        <select id="update1type<?php echo $v->id;?>" name = 'time1' >
+
+                        <?php
+                        $numKeys = array('03'=>'出差0.5','04'=>'年假0.5','05'=>'婚假0.5','06'=>'病假0.5','07'=>'事假0.5','08'=>'产假0.5','09'=>'旷工0.5','10'=>'丧假0.5');
+                        $numWeekend = array('11'=>'出差0.5');
+                        foreach($typeArr as $item)
+                        {
+                            $selected = ($v->updateType1 == $item) ? 'selected=seleted':null;
+                            echo "<option value='$item' $selected > ".$typeinfos[$item]['short']." </option>";
+                        }
+
+                        foreach($fixValue as $key=>$item)
+                        {
+                            if($v->updateType1 == $key)
+                            {
+                                $selected =  'selected==selected';
+                                echo "<option value='$key' $selected >". $item."</option>";
+                            }
+                        }
+
+                        if($v->daytype == 1)
+                        {
+                            foreach($numKeys as $key=>$value)
+                            {
+                                $selected = $v->updateType1 == $key ? 'selected=selected':null;
+                                echo "<option value='$key'".$selected.">$value</option>";
+                            }
+                        }
+                        if($v->daytype == 2)
+                        {
+                            foreach($numWeekend as $key=>$value)
+                            {
+                                $selected = $v->updateType1 == $key ? 'selected=selected':null;
+                                echo "<option value='$key'".$selected.">$value</option>";
+                            }
+                        }
+
+
+                        ?>
+                    </select></td>
+
+                <td><?php echo $v->time2;?></td>
+
+                    <td><?php
+
+                        if(in_array($v->time2Type,$keys,true))
+                        {
+                           echo $typeinfos[$v->time2Type]['short'];
+                         }else {
+                            foreach($fixValue as $key=>$item)
+                            {
+                                if($v->time2Type == $key)
+                                {
+                                    echo $item;
+                                }
+                            }
+                        }
+
+                        ?>
+
+                    </td>
+                    <td><?php
+
+                        if(($role == 1 || $role == 2) && $v->daytype == 1)
+                        {
+                            $typeArr = array('F','G','H','I');
+                        }elseif(($role == 1 || $role == 2) && $v->daytype == 2)
+                        {
+                            $typeArr = array('L','M','N');
+                        }elseif($role == 3 && $v->daytype == 1)
+                        {
+                            $typeArr = array('P');
+                        }elseif($role == 3 && $v->daytype == 2)
+                        {
+                            $typeArr = array('R');
+                        }elseif($role == 4 )
+                        {
+                            $typeArr = array('T');
+                        }
+                        ?>
+
+                        <select id="update2type<?php echo $v->id;?>" name="time2" >
+
+                            <?php
+
+                            foreach($fixValue as $key=>$item)
+                            {
+                                if($v->updateType2 == $key)
+                                {
+                                    $selected =  'selected==selected';
+                                    echo "<option value='$key' $selected >". $item."</option>";
+                                }
+                            }
+                            foreach($typeArr as $item)
+                            {
+                                $selected = $v->updateType2 == $item ? 'selected':null;
+                                echo "<option value='$item' $selected >". $typeinfos[$item]['short']."</option>";
+                            }
+//                            if($v->updateType2 == 'em')
+//                            {
+//                                echo "<option value='em' selected=selected>无记录</option>";
+//                            }elseif($v->updateType2 == 'emp')
+//                            {
+//                                echo "<option value='emp' selected=selected >未签退</option>";
+//                            }elseif($v->updateType2 == '00')
+//                            {
+//                                echo "<option value='00' selected='selected'>数据异常，请处理</option>";
+//                            }elseif($v->updateType2 == 'sun')
+//                            {
+//                                echo "<option value='sun' selected='selected'>周日值守</option>";
+//                            }
+                            if($v->daytype == 1)
+                            {
+                                foreach($numKeys as $key=>$value)
+                                {
+                                    $selected = $v->updateType2 == $key ? 'selected=selected':null;
+                                    echo "<option value='$key'".$selected.">$value</option>";
+                                }
+                            }
+                            if($v->daytype == 2)
+                            {
+                                foreach($numWeekend as $key=>$value)
+                                {
+                                    $selected = $v->updateType2 == $key ? 'selected=selected':null;
+                                    echo "<option value='$key'".$selected.">$value</option>";
+                                }
+                            }
+
+                            ?>
+                        </select></td>
+                <td><?php 
+                if($v->daytype ==1) {
+                    echo '工作日';
+                }else if($v->daytype==2) {
+                    $w = date('w',strtotime($v->signdate));
+                    if($w == 0) {
+                        echo '周日';
+                    }elseif($w == 6 ) {
+                        echo '周六';
+                    }else {
+                        echo '周末';
+                    }
+                } else if($v->daytype == 3) {
+                    echo '法定假日1';
+                } else if($v->daytype == 4) {
+                    echo '法定假日2';
+                } else {
+                    echo '数据异常';
+                }
+               
+                ?></td>
+                <td><input type="text" size='8' value="<?php echo $v->description;?>" id="<?php echo 'desc'.$i ;?>"></td>
+                <td><span onclick="<?php echo "update($v->id,desc$i,$num,'$params')";?>"  >edit</span></td>
+                  
+
+                </tr>
+                
+           <?php      $i++;  
+           endforeach; } ?>
+           
+        </tbody>
+    </table>
+      
+    
+</div>
+     <div class ="btn btn-info" style="float:right" onclick="updateAll(<?php echo "'$num'";?>,<?php echo "'$params'";?>)" >提交修改</div>
+<!--     <select name="operation">-->
+<!--         <option selected="selected" value="1">删除</option>-->
+<!--        -->
+<!--     </select>-->
+ <div class="inline">
+     <input type="submit" name='ids' class="btn btn-success custome-margin"  onclick="return confirm('您确定要删除吗？')" value="删除">
+
+
+ </form>
+<?php
+
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'record','action'=>'index','formInfo'=>$formInfo)
+                    );
+            
+    ?>
+</div>
+
+
+

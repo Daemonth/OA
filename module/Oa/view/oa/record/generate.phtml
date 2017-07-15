@@ -1,0 +1,7 @@
+<center><h4>生成报表</h4></center>
+<div style="margin: 20px">
+<!--          生成报表操作-->
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'generate'));?>" method="post" >
+        <label for="date">输入月份：</label> <input type="text" name="date" required="required" class="month"  >   <input type="submit" value="生成报表">
+    </form>
+</div>

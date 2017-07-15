@@ -1,0 +1,151 @@
+<style>
+    .table-responsive .table th{
+        white-space: nowrap;
+    }
+    .table-responsive .table tbody tr td{
+        white-space: nowrap;
+    }
+    .table-responsive{
+        width: 1130px;
+    }
+</style>
+<center><h4><b>员工考勤汇总信息</b></h4></center>
+<div class="custome-margin" style="margin-bottom: 10px">
+    
+
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'index'));?>" method="get">
+        月份：<input type="text" name="month" readonly  class = 'month' <?php if(!empty($formInfo['month'])) echo "value=".$formInfo['month']; ?> >&nbsp;&nbsp;
+
+        姓名：<input type="text" name="name" size="7" <?php if(!empty($formInfo['name'])) echo "value=".$formInfo['name']; ?> >
+        <input type="submit" value="查询">
+    </form>
+</div>
+<?php
+$uri = $_SERVER['REQUEST_URI'];
+$num = substr($uri,strrpos($uri,'/',-1)+1);?>
+
+ <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'delete','id'=>$num));?>" method="post" >
+<div class="table-responsive custome-margin page" style="height: 450px" >
+
+    <table class="table b-t b-light" >
+       <thead>
+            <tr>
+                <th ><input type="checkbox" ></th>
+                <th>修改</th>
+                <th >月份</th>
+                <th >员工号</th>
+                <th >姓名</th>
+                <th >工作日</th>
+                <th >实际工作日</th>
+                <th>工作日出差</th>
+                <th >迟到1</th>
+                <th >迟到2</th>
+                <th >早退</th>
+                <th >法定节假日1</th>
+                <th >法定节假日2</th>
+                <th >周末值守</th>
+                <th >周末出差</th>
+                <th >全勤奖</th>
+                <th >晚补1</th>
+                <th >加班1</th>
+                <th >晚补2</th>
+                <th >加班2</th>
+                <th >补助合计</th>
+                <th >事假</th>
+                <th >年假</th>
+                <th >产假</th>
+                <th >婚假</th>
+                <th >病假</th>
+                <th >丧假</th>
+                <th >旷工</th>
+                <th >出差</th>
+                <th >checkOut</th>
+                <th >checkAll</th>
+                <th >备注1</th>
+                <th >备注2</th>
+                <th >备注3</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) {
+                 $i = 0;
+                         foreach ($infos as $k=>$v): ?>
+                <tr>
+                <td ><input type="checkbox" name="post[]" value="<?php echo $v->id;?>"></td>
+                    <td><a href="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'update','id'=>$v->id));?>">edit</a></td>
+                <td ><?php echo $v->month;?></td>
+
+                <td><?php echo $v->employeeId;?></td>
+                <td ><?php echo $v->name;?></td>
+                <td><?php echo $v->workdays;?></td>
+                <td><?php echo $v->logicdays;?></td>
+                <td><?php echo $v->workaway;?></td>
+                <td><?php echo $v->late1;?></td>
+                <td><?php echo $v->late2;?></td>
+                <td><?php echo $v->leavely;?></td>
+                <td><?php echo $v->vacation1;?></td>
+                <td><?php echo $v->vacation2;?></td>
+                <td><?php echo $v->weekendwork;?></td>
+                <td><?php echo $v->weekendaway;?></td>
+
+                <td><?php echo $v->bonus;?></td>
+                <td><?php echo $v->standard1;?></td>
+                <td><?php echo (int)$v->overtime1;?></td>
+                <td><?php echo $v->standard2;?></td>
+                <td><?php echo (int)$v->overtime2;?></td>
+                <td><?php echo $v->total;?></td>
+                <td><?php echo $v->eventdays;?></td>
+                <td><?php echo $v->yeardays;?></td>
+                <td><?php echo $v->maternitydays;?></td>
+                <td><?php echo $v->marrydays;?></td>
+                <td><?php echo $v->sickdays;?></td>
+                <td><?php echo $v->funeraldays;?></td>
+                <td><?php echo $v->absencedays;?></td>
+                <td><?php echo $v->outdays;?></td>
+                <td><?php
+                    if($v->checkout)
+                    echo 'true';
+                    else
+                    echo 'false';
+                    ?></td>
+                <td><?php
+                    if($v->checkall)
+                        echo 'true';
+                    else
+                        echo 'false';
+                    ?></td>
+
+                <td><?php echo $v->desc1;?></td>
+                <td><?php echo $v->desc2;?></td>
+                <td><?php echo $v->desc3;?></td>
+                
+               
+
+                  
+                </tr>
+                
+           <?php      $i++;   endforeach; } ?>
+           
+        </tbody>
+    </table>
+    
+</div>
+
+     <div  >
+       <input type="submit" name='ids' class="btn btn-success custome-margin" value="删除" class="inline">
+    </form>
+<?php
+
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'report','action'=>'index','formInfo'=>$formInfo)
+                    );
+            
+    ?>
+
+</div>
+
+

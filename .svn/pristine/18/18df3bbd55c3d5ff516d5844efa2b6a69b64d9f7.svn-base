@@ -1,0 +1,6 @@
+<center><h3><label >导出报表信息</label> </h3></center>
+<div>
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'export'));?>" method="post">
+        请选择日期：<input type="text" name="date" class="month">   <input type="submit" value="导出">
+    </form>
+</div>

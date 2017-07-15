@@ -1,0 +1,5 @@
+2016-03-15 14:09:16 ERR (3): Zend\View\Renderer\PhpRenderer::render: Unable to render template "oa/report/generate"; resolver could not resolve to a file
+2016-03-15 14:12:14 ERR (3): origin表插入数据出错,Statement could not be executed (23000 - 1048 - Column 'printdate' cannot be null)
+2016-03-15 14:23:09 ERR (3): origin表插入数据出错,Statement could not be executed (23000 - 1048 - Column 'printdate' cannot be null)
+2016-03-15 15:52:53 ERR (3): origin表插入数据出错,Statement could not be executed (23000 - 1048 - Column 'printdate' cannot be null)
+2016-03-15 18:57:21 INFO (6): 员工登录表中没有对应的员工号021033

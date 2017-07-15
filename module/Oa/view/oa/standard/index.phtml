@@ -1,0 +1,31 @@
+
+<center><h3><b>加班费标准</b></h3></center>
+<div class="table-responsive" style="margin: 20px">
+    
+    <table class="table table-striped b-t b-light">
+        <thead>
+            <tr>                
+                <th>晚补1</th>
+                <th>晚补2</th>
+                <th>修改</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) : ?>
+
+                <tr>
+                <td><?php echo $infos->standard1;?>￥</td>
+                <td><?php echo $infos->standard2;?>￥</td>
+
+                <td><a href="<?php  echo  $this->url('oa/default',array('controller'=>'standard','action'=>'update','id'=>$infos->id));?>">edit</a></td>
+
+                </tr>
+
+
+           <?php endif; ?>
+        </tbody>
+    </table>
+    </div>
+
+
+

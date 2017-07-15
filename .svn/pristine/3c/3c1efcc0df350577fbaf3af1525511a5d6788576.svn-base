@@ -1,0 +1,92 @@
+
+<section class="vbox container-fluid">
+  <header class="header bg-primary lter text-center clearfix">
+    <div class="btn-group">
+
+      <div class="btn-group hidden-nav-xs">
+      <span style="color: black;font-size: 20px">微播易人力行政部</span>
+      </div>
+    </div>
+  </header>
+  <section class="w-f scrollable">
+    <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333"> 
+      
+      <!-- nav -->
+      <nav class="nav-primary hidden-xs">
+        <ul class="nav">
+          <li  class="active"> <a href="<?php echo $this->url('oa/default',array('controller'=>'index','action'=>'index'));?>"  class="active"> <i class="fa fa-dashboard icon"> <b class="bg-danger"></b> </i> <span>首页</span> </a> </li>
+          <li > <a href="#uikit"  > <i class="fa fa-flask icon"> <b class="bg-success"></b> </i> <span class="pull-right"> <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> </span> <span>员工</span> </a>
+            <ul class="nav lt">
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'search'));?>" > <i class="fa fa-angle-right"></i> <span>查询考勤</span> </a> </li>
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'updatepwd'));?>" > <i class="fa fa-angle-right"></i> <span>修改密码</span> </a> </li>
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'summary'));?>" > <i class="fa fa-angle-right"></i> <span>查询汇总</span> </a> </li>
+
+            </ul>
+          </li>
+          
+          
+
+          <li > <a href="#uikit"  > <i class="fa fa-flask icon"> <b class="bg-success"></b> </i> <span class="pull-right"> <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> </span> <span>管理员</span> </a>
+            <ul class="nav lt">
+
+              <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理原始表</span> </a>
+                <ul class="nav bg">
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'origin','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询原始记录</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'origin','action'=>'upload'));?>" > <i class="fa fa-angle-right"></i> <span>上传原始表</span> </a> </li>
+                </ul>
+              </li>
+              
+               <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理考勤记录</span> </a>
+                <ul class="nav bg">
+                 <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询考勤信息</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'adjustpage'));?>" > <i class="fa fa-angle-right"></i> <span>法定假日调整</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'mian'));?>" > <i class="fa fa-angle-right"></i> <span>免责处理</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'generate'));?>" > <i class="fa fa-angle-right"></i> <span>生成报表</span> </a> </li>
+                </ul>
+              </li>
+              
+               <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理登录用户信息</span> </a>
+                <ul class="nav bg">
+                <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询登录用户信息</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'upload'));?>" > <i class="fa fa-angle-right"></i> <span>上传登录用户表</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'add'));?>" > <i class="fa fa-angle-right"></i> <span>添加登录用户</span> </a> </li>
+                </ul>
+              </li>
+                <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理员工基本信息</span> </a>
+                <ul class="nav bg">
+                <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'employ','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询员工基本信息</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'employ','action'=>'upload'));?>" > <i class="fa fa-angle-right"></i> <span>上传员工信息表</span> </a> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'employ','action'=>'add'));?>" > <i class="fa fa-angle-right"></i> <span>添加新员工信息</span> </a> </li>
+                </ul>
+              </li>
+
+              <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理报表信息</span> </a>
+                <ul class="nav bg">
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询报表信息</span> </a> </li> </li>
+                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'export'));?>" > <i class="fa fa-angle-right"></i> <span>导出报表</span> </a> </li>
+                 <!-- <li > <a href="<?php /*echo $this->url('oa/default',array('controller'=>'report','action'=>'decrease'));*/?>" > <i class="fa fa-angle-right"></i> <span>调整工作日</span> </a> </li>-->
+                </ul>
+              </li>
+             
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'rule','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询上班时间规则</span> </a> </li>
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'standard','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询加班标准费</span> </a> </li>
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'excel','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询上传文件记录</span> </a> </li>
+              
+
+
+
+            </ul>
+          </li>
+
+
+          
+          
+
+
+        </ul>
+      </nav>
+      <!-- / nav --> 
+    </div>
+  </section>
+  <footer class="footer lt hidden-xs b-t b-dark"> </footer>
+</section>

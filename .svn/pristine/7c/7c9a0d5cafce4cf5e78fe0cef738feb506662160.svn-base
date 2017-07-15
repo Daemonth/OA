@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="app">
+<head>
+    <meta charset="utf-8" />
+    <title>考勤管理系统</title>
+    <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Le styles -->
+    <?php echo $this->headLink(array('rel' => 'stylesheet', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+        ->prependStylesheet($this->basePath('css/bootstrap.css'))
+        ->prependStylesheet($this->basePath('css/bootstrap-datetimepicker.min.css'))
+        ->prependStylesheet($this->basePath('css/font.css'))
+       // ->prependStylesheet($this->basePath('css/calendar/bootstrap_calendar.css'))
+        ->prependStylesheet($this->basePath('css/app.css'))
+        ->prependStylesheet($this->basePath('css/customer.css'))
+        ->prependStylesheet($this->basePath('css/font-awesome.min.css'));
+
+    echo $this->headScript()
+             ->prependFile($this->basePath('js/bootstrap-datetimepicker.zh-CN.js'))
+             ->prependFile($this->basePath('js/bootstrap-datetimepicker.min.js'))
+             ->prependFile($this->basePath('js/bootstrap.min.js'))
+             ->prependFile($this->basePath('js/jquery-1.12.0.min.js'));
+
+
+            ?>
+</head>
+<body>
+<section class="vbox container-fluid">
+    <header class="bg-dark dk header navbar navbar-fixed-top-xs"><?php include 'include/header.php';?></header>
+    <section >
+        <section class="hbox stretch" >
+            <!-- .aside -->
+            <aside class="bg-dark lter aside-md hidden-print" id="nav"><?php include 'include/aside-nav.php';?></aside>
+            <!-- /.aside -->
+            <section id="content"  >
+                <?php echo $content;?>
+                <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen" data-target="#nav"></a>
+            </section>
+            <aside class="bg-light lter b-l aside-md hide" id="notes">
+                <div class="wrapper">Notification</div>
+            </aside>
+        </section>
+    </section>
+</section>
+
+<!-- Scripts -->
+<?php echo $this->headScript()
+    ->prependFile($this->basePath('js/customer.js'))
+    ->prependFile($this->basePath('js/sortable/jquery.sortable.js'))
+    ->prependFile($this->basePath('js/calendar/demo.js'))
+    ->prependFile($this->basePath('js/calendar/bootstrap_calendar.js'))
+    ->prependFile($this->basePath('js/charts/flot/demo.js'))
+    ->prependFile($this->basePath('js/charts/flot/jquery.flot.grow.js'))
+    ->prependFile($this->basePath('js/charts/flot/jquery.flot.resize.js'))
+    ->prependFile($this->basePath('js/charts/flot/jquery.flot.tooltip.min.js'))
+    ->prependFile($this->basePath('js/charts/flot/jquery.flot.min.js'))
+    ->prependFile($this->basePath('js/charts/sparkline/jquery.sparkline.min.js'))
+    ->prependFile($this->basePath('js/charts/easypiechart/jquery.easy-pie-chart.js'))
+    ->prependFile($this->basePath('js/slimscroll/jquery.slimscroll.min.js'))
+    ->prependFile($this->basePath('js/app.plugin.js'))
+    ->prependFile($this->basePath('js/app.js'))
+
+; ?>
+
+<script>
+    $('.date').datetimepicker({
+        format:'yyyy-mm-dd',
+        startDate:'2015-05-01',
+       // endDate:new Date(),
+        startView:3,
+        autoclose:true,
+        todayBtn:'linked',
+        todayHighlight:1,
+        language:'zh-CN',
+        minView:2,
+        forceParse:true,
+        bootcssVer:3,
+    });
+    $('.month').datetimepicker({
+        format:'yyyy-mm',
+        startDate:'2015-05-01',
+       // endDate:new Date(),
+        startView:3,
+        autoclose:true,
+        todayBtn:'linked',
+        todayHighlight:1,
+        language:'zh-CN',
+        minView:3,
+        forceParse:true,
+        bootcssVer:3,
+    });
+    $('.datetime').datetimepicker({
+        format:'yyyy-mm-dd hh:ii:ss',
+        startDate:'2015-05-01',
+     //   endDate:new Date(),
+        startView:3,
+        autoclose:true,
+        todayBtn:'linked',
+        todayHighlight:1,
+        language:'zh-CN',
+        keyboardNavigation:true,
+        forceParse:true,
+        bootcssVer:3,
+
+    });
+</script>
+</body>
+</html>
+

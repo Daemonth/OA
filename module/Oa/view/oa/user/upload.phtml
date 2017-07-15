@@ -1,0 +1,13 @@
+<center><h4><b>上传登录用户信息</b></h4></center>
+<div  style="margin: 20px">
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'excel','action'=>'user')); ?>" method="post" enctype="multipart/form-data" >
+
+        <input type="file" name="user" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" >
+        <br/><br/>
+        <input class="btn btn-info" type="submit" value="上传登录信息" >
+    </form>
+
+</div>
+<div class="error" style="margin: 20px">
+    <strong>注意，每次上传员工登录信息会删除原来上传的信息，员工登录密码会被初始化，建议只上传一次！请确认表中的员工号，姓名，密码，邮箱，角色都存在，否则上传失败</strong>
+</div>

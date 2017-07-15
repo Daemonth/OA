@@ -1,0 +1,70 @@
+<center><h4><b>登录用户信息</b></h4></center>
+<div>
+    <form action="<?php echo $this->url('oa/default', array('controller' => 'excel', 'action' => 'index')); ?>" method="get">
+        <label for='name'>按时间查找：</label>
+        <input type="text" id="name" name="time" readonly  class = 'date' value=<?php echo empty($formInfo['time']) ? null : $formInfo['time']; ?>>
+        <input type="submit" value="查询" class="btn btn-info">
+    </form>
+</div>
+
+<?php //获取页码参数
+$uri = $_SERVER['REQUEST_URI'];
+$num = substr($uri, strrpos($uri, '/', -1) + 1);
+
+?>
+
+<div class="table-responsive custome-margin page">
+
+    <table class="table table-striped b-t b-light ">
+        <thead>
+        <tr>
+
+            <th>编号</th>
+            <th>上传时间</th>
+            <th>文件名</th>
+            <th>作者</th>
+            <td>下载</td>
+            <td>删除</td>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if (!empty($infos)) {
+            foreach ($infos as $k => $v): ?>
+                <tr>
+
+                    <td><?php echo $v->id; ?></td>
+                    <td><?php echo $v->uptime; ?></td>
+                    <td><?php echo $v->filename; ?></td>
+                    <td><?php echo $v->author; ?></td>
+                    <td>
+                        <a href="<?php echo $this->url('oa/default', array('controller' => 'excel', 'action' => 'download', 'id' => $v->id)); ?>">下载 </a>
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('oa/default', array('controller' => 'excel', 'action' => 'delhistory', 'id' => $v->id)); ?>">删除</a>
+
+                         
+                    </td>
+
+                </tr>
+
+            <?php endforeach;
+        } ?>
+
+        </tbody>
+    </table>
+    <br>
+
+
+</div>
+<div>
+
+
+    <?php
+    echo $this->paginationControl(
+        $this->infos,
+        'sliding',
+        'partial/paginator.phtml',
+        array('route' => 'oa/default', 'controller' => 'excel', 'action' => 'index')
+    );
+    ?>
+</div>

@@ -1,0 +1,52 @@
+
+<?php
+$this->headTitle('修改考勤信息');
+
+?>
+<div class="form-group">
+    <br>
+    <br>
+     <?php
+        $form = $this->form;  
+        $form->setAttribute('action',$this->url('oa/default',array('controller'=>'record','action'=>'update')));
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        ?>
+    <h3><label class="col-sm-2 control-label">考勤信息修改</label> </h3>
+    <div class="col-sm-5">
+        <div class="input-group m-b">
+            <span class="input-group-addon">开始时间</span>
+           <?php echo $this->formRow($form->get('starttime')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">结束时间</span>
+         <?php echo $this->formRow($form->get('endtime')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+
+        
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">简称</span>
+            <?php echo $this->formRow($form->get('short')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">描述</span>
+            <?php echo $this->formRow($form->get('description')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+        
+        <div >
+            <label class="col-sm-4 control-label">类型选择</label>
+             <?php echo $this->formRadio($form->get('type'));?>
+        </div>
+       
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+       
+       
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
+</div>

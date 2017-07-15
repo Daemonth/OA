@@ -1,0 +1,21 @@
+<?php
+use Zend\Log\Formatter\Simple;
+use Zend\Log\Writer\Stream;
+use Zend\Log\Logger;
+echo "<center><div style='color: red;margin-top:100px '>";
+if($this->exception instanceof \Oa\Exception\ErrorException) {
+    echo '<h3>'.$this->exception->errorMessage().'</h3>';
+}else {
+
+    $date = date('Y-m-d');
+    $formatter = new Simple(null,'Y-m-d H:i:s');
+    $writer = new Stream(APP.'/data/log/'.$date.'.log');
+    $writer->setFormatter($formatter);
+    $logger = new Logger();
+    $logger->addWriter($writer);
+    $logger->err($this->exception->getMessage());
+    echo '<h3>该错误请联系程序员查看错误日志</h3>';
+}
+
+echo "</div></center>";
+?>

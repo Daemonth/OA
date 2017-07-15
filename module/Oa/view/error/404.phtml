@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>404错误</title>
+
+    <style>
+        .errorPage{
+            line-height: 18px;
+            background: url("<?php echo $this->basePath('img/error_page.jpg');?>") no-repeat 331px 0px;
+            margin: 80px auto;
+            padding: 29px 0 100px 563px;
+        }
+        .errorPage p{
+            color: #999;
+            margin-bottom: 10px;
+            margin-top:10px;
+        }
+        .errorPage_title{
+            font-size: 14px;
+        }
+        .errorPage a{
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="errorPage">
+        <h2 class="errorPage_title">抱歉，你访问的地址出错啦</h2>
+        <p>页面出现的原因，可能是你访问的地址有错误</p>
+        <a href="/">返回首页</a>
+    </div>
+</div>
+
+</body>
+</html>
+

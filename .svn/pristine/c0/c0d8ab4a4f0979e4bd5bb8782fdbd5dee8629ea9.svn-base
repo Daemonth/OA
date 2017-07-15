@@ -1,0 +1,83 @@
+<?php
+    use \Oa\Tools\StaticInfo;
+?>
+<center><h4><b>员工信息</b></h4></center>
+
+<div>
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'employ','action'=>'index'));?>" method="get">
+        <label for='name'>按姓名查找：</label><input type="text" id="name" name="name">
+        <label for='employeeId'>按员工号查找：</label><input type="text" id="employeeId" name="employeeId">
+        <input type="submit" value="查询" class="btn btn-info">
+    </form>
+<!--    <form action="--><?php //echo $this->url('oa/default',array('controller'=>'employ','action'=>'index'));?><!--" method="post">-->
+<!--        <label for="month">按月份查找生日员工</label>-->
+<!--        <input type="text" name="month" id="month" value="--><?php //echo date('Y-m');?><!--" >-->
+<!--        <input type="submit" value="点击获取生日员工信息" class="btn btn-info">-->
+<!--        </form>-->
+</div>
+ <form action="<?php echo $this->url('oa/default',array('controller'=>'employ','action'=>'delete'));?>" method="post" >
+<div class="table-responsive custome-margin page">
+   
+    <table class="table table-striped b-t b-light">
+       <thead>
+            <tr>
+                <th ><input type="checkbox" >全选</th>
+                <th >员工编号</th>
+                <th >考勤编号</th>
+                <th >姓名</th>
+                <th >公司</th>                
+                <th >地区</th>
+                <th >一级部门</th>
+                <th >二级部门</th>
+                <th >职组</th>
+                <th >职位</th>
+                <th>年龄</th>
+                <th>性别</th>
+                <th >修改</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) {
+                         foreach ($infos as $k=>$v): ?>
+                <tr>
+                <td width="60px"><input type="checkbox" name="post[]" value="<?php echo $v->id;?>"></td>
+                <td ><?php echo $v->employeeId;?></td>
+                <td><?php echo $v->attendId;?></td>
+                <td><?php echo $v->name;?></td>
+                <td><?php echo $v->company;?></td>
+                <td><?php echo $v->area;?></td>
+                <td><?php echo $v->part1;?></td>
+                <td><?php echo $v->part2;?></td>
+                <td><?php echo $v->team;?></td>
+                <td><?php echo $v->job;?></td>
+<!--                     <td>--><?php //echo StaticInfo::getAge($v->identify);?><!--</td>-->
+                    <td><?php echo $v->identify;?></td>
+                    <td><?php echo $v->sex;?></td>
+                <td><a href="<?php  echo  $this->url('oa/default',array('controller'=>'employ','action'=>'update','id'=>$v->id));?>"><img src="/img/edit.png" width="30px" height="30px" ></a></td>
+               
+                </tr>
+                
+           <?php        endforeach; } ?>
+           
+        </tbody>
+    </table>
+      
+    
+</div>
+<div >
+       <input type="submit" name='ids' class="btn btn-success custome-margin" value="删除">
+    </form>
+<?php
+
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'employ','action'=>'index')
+                    );
+            
+    ?>
+
+</div>
+

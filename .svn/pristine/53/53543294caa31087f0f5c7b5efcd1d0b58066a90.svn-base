@@ -1,0 +1,100 @@
+
+<h4><label class="col-sm-2 control-label">修改员工信息</label> </h4>
+<div class="form-group">
+    <br>
+    <br>
+     <?php
+        $form = $this->form;  
+        $form->setAttribute('action',$this->url('oa/default',array('controller'=>'employ','action'=>'update','id'=>$id)));
+         $form->setAttribute('onsubmit','return checkSubmit()');
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        ?>
+
+    <div class="col-sm-5">
+        <?php echo $this->formHidden($form->get('id')->setAttributes(array('class'=>'js_id')));?>
+        <div class="input-group ">
+            <span class="input-group-addon">员工编号</span>
+         <?php echo $this->formElement($form->get('employeeId')->setAttributes(array('class'=>'form-control js_employeeId','required'=>'required')));?>
+        </div>
+
+        
+
+        <div class="input-group ">
+            <span class="input-group-addon">考勤编号</span>
+            <?php echo $this->formElement($form->get('attendId')->setAttributes(array('class'=>'form-control js_attendId','required'=>'required')));?>
+        </div>
+
+        <div class="input-group ">
+            <span class="input-group-addon">姓名</span>
+            <?php echo $this->formElement($form->get('name')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+        </div>
+        
+       <div class="input-group ">
+            <span class="input-group-addon">公司</span>
+             <?php echo $this->formElement($form->get('company')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+        </div>
+        
+         <div class="input-group ">
+            <span class="input-group-addon">地区</span>
+             <?php echo $this->formElement($form->get('area')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+        </div>
+        
+       <div class="input-group ">
+            <span class="input-group-addon">一级部门</span>
+             <?php echo $this->formElement($form->get('part1')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+        </div>
+        
+       <div class="input-group ">
+            <span class="input-group-addon">二级部门</span>
+             <?php echo $this->formElement($form->get('part2')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+        
+         <div class="input-group ">
+            <span class="input-group-addon">职级</span>
+             <?php echo $this->formElement($form->get('team')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+        <div class="input-group ">
+            <span class="input-group-addon">职位</span>
+             <?php echo $this->formElement($form->get('job')->setAttributes(array('class'=>'form-control')));?>
+        </div>
+        <div class="input-group ">
+            <span class="input-group-addon">身份证</span>
+            <?php echo $this->formElement($form->get('identify')->setAttributes(array('class'=>'form-control js_identify','required'=>'required')));?>
+        </div>
+        <div class="input-group ">
+            <span class="input-group-addon">性别</span>
+            <?php echo $this->formSelect($form->get('sex')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+        </div>
+       
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+
+        <div class="error">
+            *员工号，考勤编号，姓名，地区，身份证号,一级部门,公司,性别，身份证为必填项
+        </div>
+        <div id="showError" class="error"><?php if(!empty($_GET['errorMessage'])) {
+                echo $_GET['errorMessage'];
+            }
+            ?></div>
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
+     <?php
+     $this->formElementErrors()
+         ->setMessageOpenFormat('<ul class="error"><li>')
+         ->setMessageSeparatorString('</li><li>')
+         ->setMessageCloseString('</li></ul>');
+     echo $this->formElementErrors($form->get('employeeId'));
+     echo $this->formElementErrors($form->get('attendId'));
+     echo $this->formElementErrors($form->get('name'));
+     echo $this->formElementErrors($form->get('area'));
+     echo $this->formElementErrors($form->get('part1'));
+     echo $this->formElementErrors($form->get('company'));
+     echo $this->formElementErrors($form->get('identify'));
+
+            ?>
+</div>
+
+<script type="text/javascript" src="/js/custom/employ.js"></script>

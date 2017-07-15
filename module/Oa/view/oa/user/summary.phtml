@@ -1,0 +1,134 @@
+<style>
+    .table-responsive .table th{
+        white-space: nowrap;
+    }
+    .table-responsive .table td{
+        white-space: nowrap;
+    }
+    .table-responsive{
+        width: 1100px;
+    }
+</style>
+<center><h4><b>考勤汇总信息</b></h4></center>
+<div class="custome-margin" style="margin-bottom: 10px">
+    
+
+
+</div>
+<?php
+$uri = $_SERVER['REQUEST_URI'];
+$num = substr($uri,strrpos($uri,'/',-1)+1);?>
+
+
+<div class="table-responsive custome-margin page" >
+   
+    <table class="table b-t b-light" >
+       <thead>
+            <tr>
+
+                <th >月份</th>
+
+                <th >员工号</th>
+                <th >姓名</th>                
+                <th >工作日</th>
+                <th >实际工作日</th>
+                <th>工作日出差</th>
+                <th >迟到1</th>
+                <th >迟到2</th>
+                <th >早退</th>
+                <th >法定节假日1</th>
+                <th >法定节假日2</th>
+                <th >周末值守</th>
+                <th >周末出差</th>
+                <th >全勤奖</th>
+                <th >晚补1</th>
+                <th >加班1</th>
+                <th >晚补2</th>
+                <th >加班2</th>
+                <th >补助合计</th>
+                <th >事假</th>
+                <th >年假</th>
+                <th >产假</th>
+                <th >婚假</th>
+                <th >病假</th>
+                <th >丧假</th>
+                <th >旷工</th>
+                <th >出差</th>
+
+                <th >备注1</th>
+                <th >备注2</th>
+                <th >备注3</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) {
+
+                         foreach ($infos as $k=>$v): ?>
+                <tr>
+
+                <td ><?php echo $v->month;?></td>
+
+                <td><?php echo $v->employeeId;?></td>
+                <td><?php echo $v->name;?></td>
+                <td><?php echo $v->workdays;?></td>
+                <td><?php echo (float)$v->logicdays;?></td>
+                <td><?php echo (float)$v->workaway;?></td>
+                <td><?php echo (float)$v->late1;?></td>
+                <td><?php echo (float)$v->late2;?></td>
+                <td><?php echo (float)$v->leavely;?></td>
+                <td><?php echo (float)$v->vacation1;?></td>
+                <td><?php echo  (float)$v->vacation2;?></td>
+                <td><?php echo (float)$v->weekendwork;?></td>
+                <td><?php echo (float)$v->weekendaway;?></td>
+
+                <td><?php echo $v->bonus;?></td>
+                <td><?php echo $v->standard1;?></td>
+                <td><?php echo (int)$v->overtime1;?></td>
+                <td><?php echo $v->standard2;?></td>
+                <td><?php echo (int)$v->overtime2;?></td>
+                <td><?php echo $v->total;?></td>
+                <td><?php echo (float)$v->eventdays;?></td>
+                <td><?php echo (float)$v->yeardays;?></td>
+                <td><?php echo (float)$v->maternitydays;?></td>
+                <td><?php echo (float)$v->marrydays;?></td>
+                <td><?php echo (float)$v->sickdays;?></td>
+                <td><?php echo (float)$v->funeraldays;?></td>
+                <td><?php echo (float)$v->absencedays;?></td>
+                <td><?php echo (float)$v->outdays;?></td>
+
+
+                <td><?php echo $v->desc1;?></td>
+                <td><?php echo $v->desc2;?></td>
+                <td><?php echo $v->desc3;?></td>
+                
+               
+
+                  
+                </tr>
+                
+           <?php         endforeach; } ?>
+           
+        </tbody>
+    </table>
+    
+</div>
+
+ <br>
+     <div  >
+
+<?php
+
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'user','action'=>'summary')
+                    );
+            
+    ?>
+
+</div>
+
+
