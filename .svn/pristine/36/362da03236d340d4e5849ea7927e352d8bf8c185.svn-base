@@ -1,0 +1,64 @@
+<div class="title"><h4><b>规则信息</b></h4></div>
+
+<div class="table-responsive page">
+    
+    <table class="table table-striped b-t b-light ">
+        <thead>
+            <tr>
+                
+                <th>编号</th>
+                <th >开始时间</th>
+                <th >结束时间</th>                
+                <th>工作类型</th>
+                <th>简称</th>
+                <th>描述</th>
+                <th>修改</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($infos)) {
+                         foreach ($infos as $k=>$v): ?>
+                <tr>
+                
+                <td><?php echo $v->id;?></td>
+                <td><?php echo $v->starttime;?></td>
+                <td><?php echo $v->endtime;?></td>
+                <td><?php 
+                if($v->type ==1 )
+                    echo '普通员工工作日';
+                else if($v->type ==2) 
+                    echo '普通员工周末';
+                else if($v->type ==3) 
+                    echo '保洁员工作日';
+                else if($v->type ==4)
+                    echo '保洁员周末';
+                else 
+                    echo '晚值勤人员';
+                ?>
+                    </td>
+                <td> <?php echo $v->short;?></td>        
+                <td><?php echo $v->description;?></td>
+                <td><a href="<?php  echo  $this->url('oa/default',array('controller'=>'rule','action'=>'update','id'=>$v->id));?>">edit</a></td>
+               
+                </tr>
+                
+           <?php        endforeach; } ?>
+           
+        </tbody>
+    </table>
+       <br>
+      
+    </form>
+    
+</div>
+
+<?php
+            echo $this->paginationControl(
+                    $this->infos,
+                    'sliding',
+                    'partial/paginator.phtml',
+                    array('route'=>'oa/default','controller'=>'rule','action'=>'index')
+                    );
+    ?>
+

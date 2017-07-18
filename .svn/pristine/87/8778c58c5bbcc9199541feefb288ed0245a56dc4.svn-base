@@ -1,0 +1,47 @@
+
+<?php
+
+
+?>
+<div class="title"><h3><label >修改加班费信息</label> </h3></div>
+<div class="form-group">
+    <br>
+    <br>
+     <?php
+        $form = $this->form;  
+        $form->setAttribute('action',$this->url('oa/default',array('controller'=>'standard','action'=>'update','id'=>$id)));
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        ?>
+    
+    <div class="col-sm-5">
+        <?php echo $this->formHidden($form->get('id'));?>
+        <div class="input-group m-b">
+            <span class="input-group-addon">加班费一段</span>
+         <?php echo $this->formElement($form->get('standard1')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        
+
+        <div class="input-group m-b">
+            <span class="input-group-addon">加班费二段</span>
+            <?php echo $this->formElement($form->get('standard2')->setAttributes(array('class'=>'form-control ')));?>
+        </div>
+
+        
+        <br>
+        <div >
+            <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
+        </div>
+        
+       
+        <?php 
+        $this->formElementErrors()
+                ->setMessageOpenFormat('<ul class="error"><li>')
+                ->setMessageSeparatorString('</li><li>')
+                ->setMessageCloseString('</li></ul>');
+            echo $this->formElementErrors($form->get('standard1'));
+            echo $this->formElementErrors($form->get('standard2'));
+        echo $this->form()->closeTag(); ?>
+    </div>
+</div>

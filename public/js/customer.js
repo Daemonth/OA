@@ -1,16 +1,12 @@
 //对记录状态进行修改
 function update(id,desc,num,params) {
-    result = confirm('您确定要修改吗？');
-    if(!result)  {
-        return false;
-    }
 
     //alert($('#update1type'+id).val()+'---'+$('#update2type'+id).val()+'---'+num+'---'+$(desc).val());
     url = 'http://localhost/wbysvn/OA/public/record/update';
     data = {update1Type:$('#update1type'+id).val(),update2Type:$('#update2type'+id).val(),desc:$(desc).val(),id:id};
     $.post(url,data,function(text){
-
-       alert(text);
+        $("#myAlert").alert();
+        $("#myAlert").css({"display":"block"});
        window.location.href = 'http://localhost/wbysvn/OA/public/record/listpage/'+employeeId;
 
     });

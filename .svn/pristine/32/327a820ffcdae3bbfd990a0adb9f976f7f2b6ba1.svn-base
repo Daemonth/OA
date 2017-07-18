@@ -1,0 +1,182 @@
+<div class="title"><h4><b>员工考勤信息</b></h4></div>
+<div class="custome-margin" style="margin-bottom: 10px">
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'search'));?>" method="get">
+        开始时间：<input type="text" readonly name="starttime" class = 'date' value=<?php echo empty($formInfo['starttime'])?null:$formInfo['starttime'];?>>&nbsp;&nbsp;
+        结束时间：<input type="text" readonly  class = 'date' name="endtime"  value=<?php echo empty($formInfo['endtime'])?null:$formInfo['endtime'];?> >
+        类型：<select name="type" >
+            <option value="1" <?php echo (!empty($formInfo['type']) && $formInfo['type']==1) ? 'selected=selected':null;?> >迟到及早退</option>
+            <option value="3" <?php echo (!empty($formInfo['type']) && $formInfo['type']==3) ? 'selected=selected':null;?> >请假及未打卡</option>
+            <option value="2" <?php echo (!empty($formInfo['type']) && $formInfo['type']==2) ? 'selected=selected':null;?>>全部</option>
+
+        </select>
+          <input type="submit" value="查询">
+
+
+
+    </form>
+
+</div>
+
+<?php     //获取页码参数
+$uri = $_SERVER['REQUEST_URI'];
+$num = substr($uri,strrpos($uri,'/',-1)+1);
+
+?>
+
+    <div class="table-responsive custome-margin page">
+
+        <table class="table table-striped b-t b-light " >
+            <div>
+                <thead >
+                <tr>
+
+                    <th >考勤日期</th>
+                    <th >签到时间</th>
+                    <th>初始</th>
+                    <th >更新</th>
+                    <th >签退时间</th>
+                    <th>初始</th>
+                    <th >更新</th>
+                    <th >时间</th>
+                    <th >备注</th>
+
+                </tr>
+                </thead>
+            </div>
+            <tbody >
+            <?php if(!empty($infos)) {
+                $keys = array_keys($typeinfos);
+                foreach ($infos as $k=>$v):
+                     $w = date('w',strtotime($v->signdate));
+                     if( $v->updateType1 == 'sun'){
+                         continue;
+                     }
+                    ?>
+                    <tr>
+
+                        <td><?php echo $v->signdate;?></td>
+                        <td><?php echo $v->time1;?></td>
+                        <td><?php
+                            if(in_array($v->time1Type,$keys))
+                            {
+                                echo $typeinfos[$v->time1Type]['short'];
+                            }
+                            foreach($fixValue as $key=>$value)
+                            {
+                                if($v->time1Type == $key)
+                                {
+                                    echo $value;
+                                }
+                            }
+                            ?>
+                        </td>
+
+                        <td><?php
+                            $numKeys = array('03'=>'出差0.5','04'=>'年假0.5','05'=>'婚假0.5','06'=>'病假0.5','07'=>'事假0.5','08'=>'产假0.5','09'=>'旷工0.5','10'=>'丧假0.5',"11"=>'出差0.5');
+                            $numKeysIndex = array_keys($numKeys);
+
+                            if(in_array($v->updateType1,$keys,true))
+                            {
+                                echo $typeinfos[$v->updateType1]['short'];
+                            }elseif(in_array($v->updateType1,$numKeysIndex,true))
+                            {
+                                echo $numKeys[$v->updateType1];
+                            }else
+                            {
+                                foreach($fixValue as $key=>$value)
+                                {
+                                    if($v->updateType1 == $key)
+                                    {
+                                        echo $value;
+                                    }
+                                }
+                            }
+                            ?>
+
+                        <td><?php echo $v->time2;?></td>
+
+                        <td><?php
+                            if(in_array($v->time2Type,$keys,true))
+                            {
+                                echo $typeinfos[$v->time2Type]['short'];
+                            }else {
+                                foreach ($fixValue as $key => $value) {
+                                    if ($v->time2Type == $key) {
+                                        echo $value;
+                                    }
+                                }
+                            }
+
+                            ?>
+
+                        </td>
+                        <td>
+                            <?php
+
+                            if(in_array($v->updateType2,$keys,true))
+                            {
+                            echo $typeinfos[$v->updateType2]['short'];
+                            }elseif(in_array($v->updateType2,$numKeysIndex,true))
+                            {
+                                    echo $numKeys[$v->updateType2];
+                            }else {
+                                foreach ($fixValue as $key => $value) {
+                                    if ($v->updateType2 == $key) {
+                                        echo $value;
+                                    }
+                                }
+                            }
+                             ?>
+                        <td>
+                            <?php
+                            if($v->daytype ==1) {
+                                echo '工作日';
+                            }else if($v->daytype==2) {
+                                $w = date('w',strtotime($v->signdate));
+                                if($w == 0) {
+                                    echo '周日';
+                                }elseif($w == 6 ) {
+                                    echo '周六';
+                                }else {
+                                    echo '周末';
+                                }
+                            } else if($v->daytype==3) {
+                                echo '法定假日1';
+                            } else if($v->daytype==4) {
+                                echo '法定假日2';
+                            } else {
+                                echo '数据异常';
+                            }
+
+                            ?></td>
+                        <td><?php echo $v->description;?></td>
+
+                    </tr>
+
+                    <?php         endforeach; } ?>
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+<span>迟到15分钟以内：<?php echo "<span style='color:red'>".$count['late1']."</span>";?>次 &nbsp;&nbsp;&nbsp;&nbsp;迟到15分钟到30分钟以内：
+    <?php echo "<span style='color:red'>".$count['late2']."</span>";?>次
+    &nbsp;&nbsp;&nbsp;&nbsp;迟到30分钟到60分钟以内：<?php echo "<span style='color:red'>".$count['late3']."</span>";?>次</span>
+<?php
+
+echo $this->paginationControl(
+    $this->infos,
+    'sliding',
+    'partial/paginator.phtml',
+    array('route'=>'oa/default','controller'=>'user','action'=>'search','formInfo'=>$formInfo)
+);
+
+?>
+
+
+
+
+
+

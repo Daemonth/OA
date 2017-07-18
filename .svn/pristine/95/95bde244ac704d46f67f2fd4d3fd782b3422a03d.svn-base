@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="47fe3be3-15b9-42f2-81fa-614c8a90ae8c" name="192.168.100.32" url="http://192.168.100.32">
+        <fileTransfer host="192.168.100.32" port="22" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/var/www/devbox/" accessType="SFTP" keyPair="true" username="songzhiwen" password="dfdddfcfdfc4df92df99df92df9edf92df9bdf9edf9cdf9e">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

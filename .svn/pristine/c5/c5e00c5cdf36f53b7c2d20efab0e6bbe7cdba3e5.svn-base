@@ -1,0 +1,12 @@
+<div class="title"><h4><b>上传员工信息表</b></h4></div>
+<div class="custome-margin" style="margin-bottom: 10px">
+  <form action="<?php echo $this->url('oa/default',array('controller'=>'excel','action'=>'employ')); ?>" method="post" enctype="multipart/form-data" >
+
+         <input type="file" name="employ" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: inline">
+      <br/><br/>
+      <input class="btn btn-primary" type="submit" value="上传员工信息" style="display: inline">
+    </form>  
+     <div class="error">
+     *请确认表中的每一条记录都存在员工号，考勤编号，姓名，地区，身份证号,一级部门,公司，否则上传失败
+     </div>
+</div>

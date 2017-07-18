@@ -102,25 +102,37 @@ class BaseTable
 
 
 
-    /*//连表查询操作
-
+    //连表查询操作
     public function linktable(array $where=null,$link1=null,$limit=null,$offset=null){
 
         $select=new Select($this->tablename);
-        if (!empty($link1)) {
-            $select->join($link1,$this->tablename.typeDesc=$link1.$);
+        if(!is_null($where))
+        {
+            if (!is_object($where) && !is_array($where)) {
+                $select->where($where);
+            }else{
+
+                foreach ($where as $item) {
+                    if(!is_object($item) && !is_array($item))
+                    {
+                        $select->where($where);
+                        break;
+                    }
+
+                    $select->where($item);
+                }
+            }
+        }        
+        if (!is_null($link1)) {
+            $select->join($link1);
         }
-       
-
-       $sql=new Sql($this->getAdapter());
-       $selectString=$sql->getSqlStringForSqlObject($select);
-       $resultSet=$this->getAdapter()->query($selectString,'execute');
-       $resultSet->buffer();
-
-
-       return $resultSet;
+        $sql=new Sql($this->getAdapter());
+        $selectString=$sql->getSqlStringForSqlObject($select);
+        $resultSet=$this->getAdapter()->query($selectString,'execute');
+        $resultSet->buffer();
+        return $resultSet;
     }
-*/
+
 
 
 

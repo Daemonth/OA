@@ -19,7 +19,7 @@
         <li > <a href="#uikit"  > <i class="fa fa-flask icon"> <b class="bg-success"></b> </i> <span class="pull-right"> <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> </span> <span>快捷操作</span> </a>
             <ul class="nav lt">
               <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'origin','action'=>'upload'));?>" > <i class="fa fa-angle-right"></i> <span>上传原始表</span> </a> </li>
-              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>疑问咨询</span> </a> </li>
+              <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'serchq'));?>" > <i class="fa fa-angle-right"></i> <span>疑问咨询</span> </a> </li>
               <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'export'));?>" > <i class="fa fa-angle-right"></i> <span>生成/导出汇总表</span> </a> </li>
 
             </ul>
@@ -48,6 +48,7 @@
                <li > <a href="#form" > <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> <span>管理考勤记录</span> </a>
                 <ul class="nav bg">
                  <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'index'));?>" > <i class="fa fa-angle-right"></i> <span>查询考勤信息</span> </a> </li>
+                 <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'serchq'));?>" > <i class="fa fa-angle-right"></i> <span>疑问查询</span> </a> </li>
                   <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'adjustpage'));?>" > <i class="fa fa-angle-right"></i> <span>法定假日调整</span> </a> </li>
                   <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'mian'));?>" > <i class="fa fa-angle-right"></i> <span>免责处理</span> </a> </li>
                   <li > <a href="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'generate'));?>" > <i class="fa fa-angle-right"></i> <span>生成报表</span> </a> </li>

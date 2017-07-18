@@ -1,0 +1,33 @@
+
+
+<div class="title" style="color: red;"><h3><label >导出某月的报表之前请最好先生成报表</label> </h3></div>
+
+
+
+<div style="margin-left:20px;margin-top: 60px">
+<!--          生成报表操作-->
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'generate'));?>" method="post" >
+        <label for="date">输入月份：</label> <input type="text" name="date" required="required" class="month"  >   <input type="submit" value="生成报表">
+    </form>
+</div>
+
+
+<div style="margin-left: 20px;margin-top: 60px">
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'report','action'=>'export'));?>" method="post">
+       <label for="date">输入月份： </label><input type="text" name="date" class="month">   <input type="submit" value="导出报表">
+    </form>
+</div>
+
+
+
+<div style="margin-left: 20px;margin-top: 60px">
+<span style="color: red">特殊情况统一修改操作入口，目前只限于下雨天修改9点半之前的情况</span>
+
+ <form action="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'updatesp'));?>" method="get">
+        <label for="date">输入日期： </label><input type="text" name="starttime" readonly  class = 'date'
+ <?php if(!empty($formInfo['starttime'])) echo "value=".$formInfo['starttime']; ?> >&nbsp;&nbsp;
+        
+        <input type="submit" value="修改" class="btn btn-info">
+    </form>
+
+</div>

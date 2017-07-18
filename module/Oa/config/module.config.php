@@ -1,8 +1,10 @@
 <?php
 
+
 namespace Oa;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
+//配置默认的路径
 return array(
     'router' => array(
         'routes' => array(
@@ -19,7 +21,7 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
-                    
+                    //路由规则
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -48,7 +50,7 @@ return array(
           
         ),
     ),
-
+    //注册控制器
     'controllers' => array(
         'invokables' => array(
             'Oa\Controller\Index' => 'Oa\Controller\IndexController',
@@ -67,6 +69,7 @@ return array(
 //                'TablePlugin' => 'Oa\Controller\TablePlugin',
 //            ),
 //    ),
+//视图显示的管理
     'view_manager' => array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,

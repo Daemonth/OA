@@ -62,7 +62,7 @@ class Module
 //            },2);
             return $response;
         }else {
-            //权限控制
+            //通过ACL进行的权限控制
             $acl = new \Zend\Permissions\Acl\Acl();
             $acl->addRole('employee');
             $acl->addRole('admin', 'employee');
@@ -99,7 +99,7 @@ class Module
             return $response;
         }
     }
-
+    //加载配置文件
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
@@ -119,7 +119,7 @@ class Module
 
         );
     }
-
+   //提供一个工厂，为了创建一个模型的table。当我们需要的时候就取它
     public function getServiceConfig() {
         return array(
             'factories'=>array(

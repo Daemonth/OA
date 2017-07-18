@@ -1,0 +1,31 @@
+.title{
+    text-align: center;
+}
+ .custome-margin {
+     margin-left: 20px;
+ }
+ .page {
+
+     height: 420px;
+     width: 99%;
+     margin: 10px;
+
+     overflow: scroll;
+ }
+  .inline {
+      display: inline;
+  }
+  .borderClass {
+      border: solid 2px black;
+  }
+  .error {
+      color: red;
+  }
+  .edit {
+      border: solid 2px greenyellow;
+      height: 100px;
+      overflow: auto;
+  }
+#myAlert{
+    display: none;
+}

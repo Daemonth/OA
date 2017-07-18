@@ -1,0 +1,13 @@
+<!--    工作日与法定假日调整-->
+<div class="title"><h4>免责处理</h4></div>
+    <div style="margin: 20px">
+        上午免责结束时间：
+        <input type="text" id="morning"  required="required" name="morning" readonly class="datetime">
+        <button class="btn btn-info" onclick="mian(morning,1)">上午免责</button>
+    </div>
+
+    <div style="margin: 20px">
+    下午免责开始时间：
+    <input type="text" id="evening" name="evening" readonly class="datetime" required="required" >
+    <button class="btn btn-info" onclick="mian(evening,2)">下午免责</button>
+    </div>

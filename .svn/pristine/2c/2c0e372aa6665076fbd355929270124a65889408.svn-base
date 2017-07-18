@@ -1,0 +1,349 @@
+<?php
+
+namespace Oa\Model;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Delete;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Sql;
+use Zend\ServiceManager\ServiceManager;
+use Zend\Log\Formatter\Simple;
+use Zend\Log\Writer\Stream;
+use Zend\Log\Logger;
+use Oa\Exception\ErrorException;
+class BaseTable
+{
+    protected $tableName;
+    protected $tableModel;
+    protected $tableGateway;
+    protected $sm;
+    protected $adapter;
+    public $logger;
+    //构造引入ServiceManager
+    public function __construct(ServiceManager $sm)
+    {
+        $this->sm = $sm;
+        $date = date('Y-m-d');
+        $formatter = new Simple(null,'Y-m-d H:i:s');
+        $writer = new Stream(APP.'/data/log/'.$date.'.log');
+        $writer->setFormatter($formatter);
+        $this->logger = new Logger();
+        $this->logger->addWriter($writer);
+    }
+
+    //获取adapter
+    public function getAdapter()
+    {
+        if(!$this->adapter)
+        {
+            $this->adapter = $this->sm->get('Zend\Db\Adapter\Adapter');
+        }
+        return $this->adapter;
+    }
+
+    //获取tableGateway
+    public function getTableGateway()
+    {
+        if(!$this->tableGateway)
+        {
+           // $this->tableGateway = new TableGateway($this->tableName,$this->getAdapter(),null,new ResultSet(ResultSet::TYPE_ARRAYOBJECT));
+            $this->tableGateway = new TableGateway($this->tableName,$this->getAdapter(),null,new ResultSet(ResultSet::TYPE_ARRAYOBJECT));
+        }
+        return $this->tableGateway;
+    }
+
+    //获取表中所有信息
+    public function fetchAll($where = null,$order = null,$limit = null,$offset = null){
+        $select = new Select($this->tableName);
+        if(!empty($order))
+        {
+            $select->order($order);
+        }
+
+        if(!is_null($where))
+        {
+            if (!is_object($where) && !is_array($where)) {
+                $select->where($where);
+            }else{
+
+            foreach ($where as $item) {
+                if(!is_object($item) && !is_array($item))
+                {
+                    $select->where($where);
+                    break;
+                }
+
+                $select->where($item);
+            }
+          }
+        }
+        if(!empty($limit))
+        {
+            $select->limit($limit);
+            if(!empty($offset))
+            {
+                $select->offset($offset);
+            }
+        }
+
+
+        //$resultSet = $this->tableGateway->selectWith($select);
+        $sql = new Sql($this->getAdapter());
+        $selectString = $sql->getSqlStringForSqlObject($select);
+        $resultSet = $this->getAdapter()->query($selectString,'execute');
+        $resultSet->buffer();
+
+        return $resultSet;
+      
+    }
+
+
+
+    //连表查询操作
+    public function linktable(array $where=null,$link1=null,$limit=null,$offset=null){
+
+        $select=new Select($this->tablename);
+        if(!is_null($where))
+        {
+            if (!is_object($where) && !is_array($where)) {
+                $select->where($where);
+            }else{
+
+                foreach ($where as $item) {
+                    if(!is_object($item) && !is_array($item))
+                    {
+                        $select->where($where);
+                        break;
+                    }
+
+                    $select->where($item);
+                }
+            }
+        }        
+        if (!is_null($link1)) {
+            $select->join($link1);
+        }
+        $sql=new Sql($this->getAdapter());
+        $selectString=$sql->getSqlStringForSqlObject($select);
+        $resultSet=$this->getAdapter()->query($selectString,'execute');
+        $resultSet->buffer();
+        return $resultSet;
+    }
+
+
+
+
+    //插入表操作
+    public function executeStr($data)
+    {
+        if(empty($data))
+        {
+            return false;
+        }
+        $sql = new Sql($this->getAdapter());
+        $insert = $sql->insert($this->tableName);
+        try {
+             $insert->values($data);
+
+              $sqlString = $sql->getSqlStringForSqlObject($insert);
+
+              return  $this->getAdapter()->query($sqlString,'execute');
+        }catch (\Exception $e)
+        {
+            //记录日志
+            $this->logger->err($this->tableName.'表插入数据出错,'.$e->getMessage());
+            //抛出自定义错误
+            throw new ErrorException('插入内容出错');
+        }
+
+    }
+
+    //根据id获取一条记录
+    public function fetchOne($where =array(),$order = null)
+    {
+        $select = new Select($this->tableName);
+        if(!empty($where)) {
+            foreach ($where as $item) {
+                if (!is_array($item)) {
+                    $select->where($where);
+                    break;
+                }
+                $select->where($item);
+            }
+        }
+        if(!empty($order))
+        {
+            $select->order($order);
+        }
+        $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet;
+        $resultSetPrototype->setArrayObjectPrototype(new $this->tableModel);
+        $tableGateway = new TableGateway($this->tableName,$this->getAdapter(),null,$resultSetPrototype);
+
+        $row = $tableGateway->selectWith($select)->current();
+
+        return $row;
+    }
+
+
+    //插入操作
+    public function insert($data)
+    {
+        if(empty($data))
+        {
+            return false;
+        }
+
+        try {
+            $this->getTableGateway()->insert($data);
+        }catch (\Exception $e)
+        {
+            $this->logger->err($this->tableName.'表插入数据出错,'.$e->getMessage());
+            throw new ErrorException('数据插入出错');
+        }
+
+        return $this->getTableGateway()->lastInsertValue;
+    }
+    
+    //更新操作
+    public function update($data,$where = null)
+    {
+        if(empty($data))
+        {
+            return false;
+        }
+        try {
+          return  $this->getTableGateway()->update($data,$where);
+        }catch (\Exception $e)
+        {
+            //记录日志
+            $this->logger->err($this->tableName.'表更新数据出错,'.$e->getMessage());
+            //抛出自定义错误
+            throw new ErrorException('提交内容出错');
+        }
+
+    }
+
+    //保存功能
+    protected function save($obj)
+    {
+        $data = get_object_vars($obj);
+        $id = (int)$data['id'];
+        unset($data['id']);
+        if (!$id) {
+            return $this->insert($data);
+        } else {
+            if ($this->fetchOne(array('id' => $id))) {
+
+                return $this->update($data, array('id' => $id));
+            } else {
+                return false;
+            }
+
+        }
+    }
+
+    //删除
+    public function delete($where)
+    {
+        if(empty($where))
+        {
+            return false;
+        }
+        try {
+            return $this->getTableGateway()->delete($where);
+        }catch (\Exception $e)
+        {
+            $this->logger->err($this->tableName.'表删除数据出错,'.$e->getMessage());
+            //抛出自定义错误
+            throw new ErrorException('删除出错');
+        }
+    }
+
+
+    //删除全部
+    public function deleteAll()
+    {
+        $sql = new Sql($this->getAdapter());
+        $delete = $sql->delete();
+        $delete->from($this->tableName);
+        $statement = $sql->prepareStatementForSqlObject($delete);
+        $statement->execute();
+    }
+
+
+    //查询的数据以对象的形式返回
+    public function getAsObject($where =array(),$order = null)
+   {
+      $select = new Select($this->tableName);
+        if(!empty($where)) {
+            foreach ($where as $item) {
+                if (!is_array($item)) {
+                    $select->where($where);
+                    break;
+                }
+                $select->where($item);
+            }
+        }
+        if(!empty($order))
+        {
+            $select->order($order);
+        }
+
+        $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
+        $resultSetPrototype->setArrayObjectPrototype(new $this->tableModel);
+        $paginatorAdapter = new DbSelect (
+                    $select,
+                    $this->getAdapter(),
+                    $resultSetPrototype
+                );
+        $resultSetPrototype->buffer();
+        $paginator = new Paginator($paginatorAdapter);
+
+        return $paginator;
+    }
+
+  
+
+    //分页查询
+
+    public function _getPaginator($where = null,$order = null) {
+        $select = new Select($this->tableName);
+        if(!empty($order)) {
+        $select->order($order);
+        }
+
+        if(!is_null($where)) {
+            if (!is_object($where) && !is_array($where)) {
+                $select->where($where);
+            }else{
+            foreach($where as $item)
+            {
+                $select->where($item);
+            }
+          }
+
+        }
+
+//        $sql = $select->getSqlString();
+        $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
+        $resultSetPrototype->setArrayObjectPrototype(new $this->tableModel);
+        $paginatorAdapter = new DbSelect (
+                    $select,
+                    $this->getAdapter(),
+                    $resultSetPrototype
+                );
+
+        $resultSetPrototype->buffer();
+        $paginator = new Paginator($paginatorAdapter);
+
+        return $paginator;
+    }
+    
+}
+
+
+
+?>
