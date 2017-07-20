@@ -14,7 +14,7 @@ return array(
 
     'service_manager'=>array(
         'factories'=>array(
-            'Zend\Db\Adapter\Adapter'=>'Zend\Db\Adapter\AdapterServiceFactory',
+            'Zend\Db\Adapter\Adapter'=>'Zend\Db\Adapter\AdapterServiceFactory',//如何获取 Zend\Db\Adapter\Adapter
         ),
     )
 );

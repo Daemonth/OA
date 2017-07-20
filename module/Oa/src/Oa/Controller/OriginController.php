@@ -14,9 +14,7 @@ class OriginController extends BaseController
     //原始信息首页
      public function indexAction()
     {
-        
         $pagenum = (int) $this->params()->fromRoute('id',1);
-        
         $where = array();
         $formInfo = array();
         

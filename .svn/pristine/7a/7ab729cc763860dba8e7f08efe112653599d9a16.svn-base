@@ -1,0 +1,77 @@
+<div class="title"><h4><b>登录用户信息</b></h4></div>
+<div>
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'index'));?>" method="get">
+        <label for='name'>按姓名查找：</label><input type="text" id="name" name="name">
+        <label for='employeeId'>按员工号查找：</label><input type="text" id="employeeId" name="employeeId">
+        <input type="submit" value="查询" class="btn btn-info">
+    </form>
+</div>
+
+<?php     //获取页码参数
+//$uri = $_SERVER['REQUEST_URI'];
+//$num = substr($uri,strrpos($uri,'/',-1)+1);
+
+?>
+<form action="<?php echo $this->url('oa/default',array('controller'=>'user','action'=>'delete','id'=>$num));?>" method="post" >
+<div class="table-responsive custome-margin page">
+    
+        <table class="table table-striped b-t b-light ">
+            <thead>
+            <tr>
+                <th ><input type="checkbox" >全选</th>
+                <th>员工号</th>
+                <th >邮箱</th>
+                <th >姓名</th>
+                <th>角色</th>
+                <th>修改</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <?php if(!empty($infos)) {
+                foreach ($infos as $k=>$v): ?>
+                    <tr>
+                        <td><input type="checkbox" name="post[]" value="<?php echo $v->id;?>"></td>
+                        <td><?php echo $v->employeeId;?></td>
+                        <td><?php echo $v->email;?></td>
+                        <td><?php echo $v->name;?></td>
+                        <td><?php
+                            if($v->role ==1)
+                                echo '普通员工';
+                            else if($v->role == 2)
+                                echo '管理员';
+                            else if($v->role == 3)
+                                echo '保洁人员';
+                            else if($v->role == 5)
+                                echo '实习生';
+                            else if($v->role == 6)
+                                echo '不用打卡人员';
+                            else
+                                echo '晚上值勤';
+                            ?>
+                        </td>
+                      <!--  <td><a href="<?php /* echo  $this->url('oa/default',array('controller'=>'user','action'=>'update','id'=>$v->id));*/?>">edit</a></td> -->
+                        <td><a href="<?php  echo  $this->url('oa/default',array('controller'=>'user','action'=>'update','id'=>$v->id));?>"><img src="/img/edit.png" width="30px" height="30px" > </a></td>
+
+                    </tr>
+
+                <?php        endforeach; } ?>
+
+            </tbody>
+        </table>
+        <br>
+
+
+</div>
+    <div>
+<input type="submit" name='ids' class="btn btn-success" value="删除">
+</form>
+<?php
+echo $this->paginationControl(
+    $this->infos,
+    'sliding',
+    'partial/paginator.phtml',
+    array('route'=>'oa/default','controller'=>'user','action'=>'index')
+);
+?>
+</div>

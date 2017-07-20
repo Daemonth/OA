@@ -1,0 +1,44 @@
+<!--    工作日与法定假日调整-->
+<div class="title"><h4>法定假日调整</h4></div>
+    <div style="margin: 20px">
+        <div>
+            全天节假日调整：<br>
+            时间：<input type="text" id="adjustday" readonly  class = 'date' >
+            <br>
+            类型： <select id="adjust" name="adjust">
+                <option value="0">--请选择--</option>
+                <option value="1">调整为工作日</option>
+                <option value="3">调整为节假日1</option>
+                <option value="4">调整为节假日2</option>
+            </select>
+            <br>
+            <input type="submit" value="调整" class="btn btn-info" onclick="adjust()">
+        </div>
+        <br/>
+        <div>
+            半天节假日调整：<br>
+            时间：<input type="text" id="halfDay" readonly class="date">
+                  <input type="radio"  name="radio" value="am" checked>上午
+                  <input type="radio"  name="radio" value="pm">下午
+            <br>
+            类型：<select id="role" >
+                <option value="1" selected="selected">女神节</option>
+                <option value="2" >青年节</option>
+            </select>
+            <br>
+            <input type="submit" value="调整" class="btn btn-info" onclick="half()">
+        </div>
+
+    </div>
+
+<div style="margin-left: 20px;margin-top: 60px">
+    <span style="color: red">迟到免责：</span>
+
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'updatesp'));?>" method="get">
+        <label for="date">输入日期： </label><input type="text" name="starttime" readonly  class = 'date'
+            <?php if(!empty($formInfo['starttime'])) echo "value=".$formInfo['starttime']; ?> >&nbsp;&nbsp;
+
+        <input type="submit" value="修改" class="btn btn-info">
+    </form>
+
+</div>

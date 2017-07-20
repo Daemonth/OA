@@ -79,24 +79,160 @@ class ExcelController extends BaseController
                 $count = count($infos);
 
                 $userinfo = new Userinfo();
+                $user = new User();
                 //保存信息
                 $conn = $this->getAdapter()->getDriver()->getConnection();
                 $conn->beginTransaction();
                 try {
                     $this->common->getUserinfoTable()->deleteAll('userinfo');
                     for ($i = 1; $i < $count; $i++) {
-                        $userinfo->company = $infos[$i][0];
-                        $userinfo->area = $infos[$i][1];
-                        $userinfo->part1 = $infos[$i][2];
-                        $userinfo->part2 = $infos[$i][3];
-                        $userinfo->team = $infos[$i][4];
+                        $userinfo->employeeId = $infos[$i][7];
+                        $userinfo->attendId =$infos[$i][8];
+                        $userinfo->name = $infos[$i][1];
+                        $userinfo->company = "北京微播易";
+                        $userinfo->area = "北京";
+                        $userinfo->team = $infos[$i][2];
+                        $userinfo->part1 = $infos[$i][3];
+                        $userinfo->part2 = $infos[$i][4];
                         $userinfo->job = $infos[$i][5];
-                        $userinfo->employeeId = $infos[$i][6];
-                        $userinfo->name = $infos[$i][7];
-                        $userinfo->attendId = $infos[$i][8];
-                        $userinfo->sex = $infos[$i][9];
-                        $userinfo->identify = $infos[$i][10];
+                        $userinfo->sex = $infos[$i][8];
+                        $userinfo->identify = null;
                         $result = $this->common->getUserinfoTable()->saveAs($userinfo);
+                        $where="employeeId=".$infos[$i][7];
+                        $userhg=$this->common->getUserTable()->fetchAll($where)->toArray();
+                        if(empty($userhg)){
+                            $user->employeeId = $infos[$i][7];
+                            $user->email =$infos[$i][10];;
+                            $user->password =md5("123456");
+                            $user->name = $infos[$i][1];
+                            $user->role = 1;
+                            $user->initlogin=1;
+                            $result1 = $this->common->getUserTable()->saveAs($user);
+                            if (!$result1) {
+                                throw new ErrorException('');
+                            }
+                        }
+                        if (!$result) {
+                            throw new ErrorException('');
+                        }
+                    }
+                    unset($infos);  //释放上传的数据
+                    //保存上传历史
+                    $this->saveHistory($filename);
+                    $conn->commit();
+                } catch (\Exception $e) {
+                    $conn->rollback();
+                    if (is_file($route)) {
+                        @unlink($route);
+                    }
+                    $i++;
+                    throw new ErrorException("普通员工基本信息表插入数据第" . $i . "行出错");
+                }
+
+                $excel->setActiveSheetIndex(1);
+                $infos = $excel->getActiveSheet()->toArray();
+                $temp = array();
+                foreach ($infos as $key => $value) {
+                    if (empty($value[0])) {
+                        break;
+                    }
+                    $temp[$key] = $value;
+                }
+                $infos = $temp;
+                $count = count($infos);
+
+                $userinfo = new Userinfo();
+                //保存信息
+                $conn = $this->getAdapter()->getDriver()->getConnection();
+                $conn->beginTransaction();
+                try {
+                    for ($i = 1; $i < $count; $i++) {
+                        $userinfo->employeeId = $infos[$i][5];
+                        $userinfo->attendId =$infos[$i][6];
+                        $userinfo->name = $infos[$i][1];
+                        $userinfo->company = "北京微播易";
+                        $userinfo->area = "北京";
+                        $userinfo->team = $infos[$i][2];
+                        $userinfo->part1 = $infos[$i][3];
+                        $userinfo->part2 = $infos[$i][3];
+                        $userinfo->job = $infos[$i][4];
+                        $userinfo->sex = $infos[$i][8];
+                        $userinfo->identify = null;
+                        $result = $this->common->getUserinfoTable()->saveAs($userinfo);
+                        $where="employeeId=".$infos[$i][5];
+                        $userhg=$this->common->getUserTable()->fetchAll($where)->toArray();
+                        if(empty($userhg)){
+                            $user->employeeId = $infos[$i][5];
+                            $user->email =null;
+                            $user->password =md5("123456");
+                            $user->name = $infos[$i][1];
+                            $user->role = 5;
+                            $user->initlogin=1;
+                            $result1 = $this->common->getUserTable()->saveAs($user);
+                            if (!$result1) {
+                                throw new ErrorException('');
+                            }
+                        }
+                        if (!$result) {
+                            throw new ErrorException('');
+                        }
+                    }
+                    unset($infos);  //释放上传的数据
+                    //保存上传历史
+                    $this->saveHistory($filename);
+                    $conn->commit();
+                } catch (\Exception $e) {
+                    $conn->rollback();
+                    if (is_file($route)) {
+                        @unlink($route);
+                    }
+                    $i++;
+                    throw new ErrorException("其他员工基本信息表插入数据第" . $i . "行出错");
+                }
+                $excel->setActiveSheetIndex(2);
+                $infos = $excel->getActiveSheet()->toArray();
+                $temp = array();
+                foreach ($infos as $key => $value) {
+                    if (empty($value[0])) {
+                        break;
+                    }
+                    $temp[$key] = $value;
+                }
+                $infos = $temp;
+                $count = count($infos);
+
+                $userinfo = new Userinfo();
+                //保存信息
+                $conn = $this->getAdapter()->getDriver()->getConnection();
+                $conn->beginTransaction();
+                try {
+                    for ($i = 1; $i < $count; $i++) {
+                        $userinfo->employeeId = $infos[$i][1];
+                        $userinfo->attendId =$infos[$i][2];
+                        $userinfo->name = $infos[$i][0];
+                        $userinfo->company = "北京微播易";
+                        $userinfo->area = "北京";
+                        $userinfo->team = "";
+                        $userinfo->part1 = "";
+                        $userinfo->part2 = "";
+                        $userinfo->job = "";
+                        $userinfo->sex = $infos[$i][3];
+                        $userinfo->identify = null;
+                        $result = $this->common->getUserinfoTable()->saveAs($userinfo);
+                        $where="employeeId=".$infos[$i][1];
+                        $userhg=$this->common->getUserTable()->fetchAll($where)->toArray();
+                        if(empty($userhg)){
+                            $user->employeeId = $infos[$i][1];
+                            $user->email =null;
+                            $user->password =md5("123456");
+                            $user->name = $infos[$i][0];
+                            $user->role = 3;
+                            $user->initlogin=1;
+                            $result1 = $this->common->getUserTable()->saveAs($user);
+                            if (!$result1) {
+                                throw new ErrorException('');
+                            }
+                        }
                         if (!$result) {
 
                             throw new ErrorException('');
@@ -112,10 +248,73 @@ class ExcelController extends BaseController
                         @unlink($route);
                     }
                     $i++;
-                    throw new ErrorException("员工基本信息表插入数据第" . $i . "行出错");
+                    throw new ErrorException("保洁员工表基本信息表插入数据第" . $i . "行出错");
                 }
-
-
+                $excel->setActiveSheetIndex(3);
+                $infos = $excel->getActiveSheet()->toArray();
+                $temp = array();
+                foreach ($infos as $key => $value) {
+                    if (empty($value[0])) {
+                        break;
+                    }
+                    $temp[$key] = $value;
+                }
+                $infos = $temp;
+                $count = count($infos);
+                $userinfo = new Userinfo();
+                //保存信息
+                $conn = $this->getAdapter()->getDriver()->getConnection();
+                $conn->beginTransaction();
+                try {
+                    for ($i = 1; $i < $count; $i++) {
+                        $userinfo->employeeId = $infos[$i][7];
+                        $userinfo->attendId =$i;
+                        $userinfo->name = $infos[$i][1];
+                        $userinfo->company = "北京微播易";
+                        $userinfo->area = "北京";
+                        $userinfo->team = $infos[$i][2];
+                        $userinfo->part1 = $infos[$i][3];
+                        $userinfo->part2 = $infos[$i][4];
+                        $userinfo->job = $infos[$i][5];
+                        $userinfo->sex = $infos[$i][8];
+                        $userinfo->identify = null;
+                        $result = $this->common->getUserinfoTable()->saveAs($userinfo);
+                        $user->employeeId = $infos[$i][7];
+                        $user->email =$infos[$i][10];;
+                        $user->password =md5("123456");
+                        $user->name = $infos[$i][1];
+                        $user->role = '6';
+                        $user->initlogin=1;
+                        $where="employeeId=".$infos[$i][7];
+                        $userhg=$this->common->getUserTable()->fetchAll($where)->toArray();
+                        if(empty($userhg)){
+                            $user->employeeId = $infos[$i][7];
+                            $user->email =$infos[$i][10];;
+                            $user->password =md5("123456");
+                            $user->name = $infos[$i][1];
+                            $user->role = '6';
+                            $user->initlogin=1;
+                            $result1 = $this->common->getUserTable()->saveAs($user);
+                            if (!$result1) {
+                                throw new ErrorException('');
+                            }
+                        }
+                        if (!$result) {
+                            throw new ErrorException('');
+                        }
+                    }
+                    unset($infos);  //释放上传的数据
+                    //保存上传历史
+                    $this->saveHistory($filename);
+                    $conn->commit();
+                } catch (\Exception $e) {
+                    $conn->rollback();
+                    if (is_file($route)) {
+                        @unlink($route);
+                    }
+                    $i++;
+                    throw new ErrorException("未打卡员工表基本信息表插入数据第" . $i . "行出错");
+                }
             }
 
         }
@@ -125,7 +324,6 @@ class ExcelController extends BaseController
 
     public function userAction()
     {
-
         if (isset($_FILES['user']) && strlen($_FILES['user']['name']) > 0) {
             $dir = date('Y-m-d');
             if (!is_dir(APP . '/data/uploads/' . $dir)) {
@@ -185,12 +383,9 @@ class ExcelController extends BaseController
                     $i++;
                     throw new ErrorException("登录表插入数据第" . $i . "行出错");
                 }
-
-
             }
 
         }
-
         return $this->redirect()->toRoute('oa/default', array('controller' => 'user', 'action' => 'index'));
     }
 
@@ -198,9 +393,24 @@ class ExcelController extends BaseController
     public function originAction()
     {
         set_time_limit(600);
-
+        if (empty($_POST['date'])){
+            $date=date("Y-m");
+        }else{
+            $date=$_POST['date'];
+        }
+        $firstday = date("Y-m-01", strtotime($date));
+        $lastday = date("Y-m-d", strtotime("$firstday +1 month -1 day"));
         //如果有提交上传
         if (isset($_FILES['origin']) && strlen($_FILES['origin']['name']) > 0) {
+            $where = new Where();
+            $where->between('time', $firstday, $lastday);
+            $this->common->getOriginTable()->delete($where);
+            $where1 = new Where();
+            $where1->between('signdate', $firstday, $lastday);
+            $this->common->getRecordTable()->delete($where1);
+            $where2 = new Where();
+            $where2->in('month', array($date));
+            $this->common->getReportTable()->delete($where2);
             $dir = date('Y-m-d');
             //以天为单位创建目录
             if (!is_dir(APP . '/data/uploads/' . $dir)) {
@@ -225,8 +435,6 @@ class ExcelController extends BaseController
                 for ($k = 0; $k < 3; $k++) {
                     unset($infos[$k]);
                 }
-
-
                 $temp = array();
                 foreach ($infos as $key => $value) {
                     if (empty($value[0])) {
@@ -242,7 +450,6 @@ class ExcelController extends BaseController
                 $conn1->beginTransaction();
                 try {
                     for ($i = 3; $i < $count + 3; $i++) {
-
                         $origin->printdate = $infos[$i][0];
                         $origin->attendId = $infos[$i][1];
                         $origin->name = $infos[$i][2];
@@ -253,7 +460,6 @@ class ExcelController extends BaseController
                         $origin->devicesuq = $infos[$i][7];
                         $results = $this->common->getOriginTable()->saveAs($origin);
                         if (!$results) {
-
                             throw new ErrorException("");
                         }
                         $month = date('Y-m-01', strtotime($infos[$i][5]));
@@ -261,8 +467,6 @@ class ExcelController extends BaseController
                             $dateArray[] = $month;
                         }
                     }
-
-
                     $conn1->commit();
 
                 } catch (\Exception $e) {
@@ -297,7 +501,6 @@ class ExcelController extends BaseController
                     if (is_file($route)) {
                         @unlink($route);
                     }
-
                     throw new ErrorException($e->errorMessage());
                 }
             }
@@ -305,7 +508,6 @@ class ExcelController extends BaseController
         }
 
         return $this->redirect()->toRoute('oa/default', array('controller' => 'origin', 'action' => 'index'));
-
     }
 
 
@@ -340,18 +542,13 @@ class ExcelController extends BaseController
                 @unlink($route);
                 $this->common->getHistoryTable()->delete(array('id' => $id));
             }
-
-
         }
-
         return $this->redirect()->toRoute('oa/default', array('controller' => 'excel', 'action' => 'index'));
-
     }
 
     public function downloadAction()
     {
         $id = (int)$this->params()->fromRoute('id', 0);
-
         if (!$id) {
             $this->redirect()->toRoute('oa/default', array('controller' => 'excel', 'action' => 'index'));
         }
@@ -375,13 +572,11 @@ class ExcelController extends BaseController
         die();
     }
 
-
 //插入空记录
     public function emptyRecord($date)
     {
         //查询出除免责人员以外的所有用户信息
         $excludeEmployee = explode(',', EXCLUDE);
-
         $w = array();
         // $where = new Where();
         // $where->notIn('employeeId',$excludeEmployee);
@@ -402,9 +597,7 @@ class ExcelController extends BaseController
             $oWhere = array();
             array_push($oWhere, array('employeeId' => $value['employeeId'], 'signdate' => $date));
             $record = $this->common->getRecordTable()->fetchAll($oWhere)->toArray();
-
             if (!$record) {
-
                 //生成一个月的空记录
                 for ($i = 0; $i < $days; $i++) {
                     $emptyRecord->employeeId = $value['employeeId'];
@@ -414,7 +607,6 @@ class ExcelController extends BaseController
                     $emptyRecord->time2Type = 'em';
                     $emptyRecord->updateType1 = 'em';
                     $emptyRecord->updateType2 = 'em';
-
                     $daytype = date('w', strtotime($signdate));
                     if ($daytype == 0 || $daytype == 6) {
                         $emptyRecord->daytype = 2;
@@ -433,9 +625,7 @@ class ExcelController extends BaseController
 
             }
         }
-
     }
-
     //生成考勤记录
     public function generateRecord($infos, $userResult)
     {
@@ -459,15 +649,17 @@ class ExcelController extends BaseController
             $timestamp = strtotime($value[5]);
             //确定工作日还是周末
             $w = date('w', $timestamp);
-            if ($w == 6 || $w == 0) {
-                $dayType = 2;//周末
-            } else {
+            if ($w == 6) {
+                $dayType = 2;//周六
+            }elseif($w == 0){
+                $dayType = 5;//周日
+            }else{
                 $dayType = 1;//工作日
             }
-            if (($role == 1 || $role == 2) && $dayType == 1) {
-                //普通员工管理员工作日
+            if (($role == 1 || $role == 2 || $role == 5 || $role == 6) && $dayType == 1) {
+                //普通员工管理员实习生工作日
                 $typeDesc = $this->common->getTypeDesc(strtotime($value[5]), 1);
-            } elseif (($role == 1 || $role == 2) && $dayType == 2) {
+            } elseif (($role == 1 || $role == 2 || $role == 5 || $role == 6) && $dayType == 2) {
                 //普通员工管理员周六
                 $typeDesc = $this->common->getTypeDesc(strtotime($value[5]), 2);
             } elseif ($role == 3 && $dayType == 1) {
@@ -482,20 +674,18 @@ class ExcelController extends BaseController
             } else {
                 $typeDesc = '00';
             }
-
-
             $hour = explode(':', NIGHT);
             $hour = $hour[0];
             if ($role == 4) {
                 //如果晚勤在上午的数据属于前一天上班
                 $date = date('Y-m-d', $timestamp);
-                if ($timestamp < strtotime($date . ' 12:00:00')) {
+                if ($timestamp < strtotime($date . ' 12:0输入日期：￼
+0:00')) {
                     $date = date('Y-m-d', strtotime('-1 day', $timestamp));
                 }
             } else {
                 $date = date('Y-m-d', strtotime("-" . $hour . ' hour', $timestamp));
             }
-
             $initDate = $date;
             $record = $this->common->getRecordTable()->fetchOne(array('employeeId' => $employeeId, 'signdate' => $date));
             if (!$record) {
@@ -520,8 +710,6 @@ class ExcelController extends BaseController
                         $record->time2Type = $typeDesc;
                         $record->updateType2 = $typeDesc;
                     }
-
-
                 }
             } else {
                 //其它角色
@@ -562,8 +750,6 @@ class ExcelController extends BaseController
             } catch (\Exception $e) {
                 throw new ErrorException('员工号' . $record->employeeId . '保存记录过程出错');
             }
-
-
         }
 
     }

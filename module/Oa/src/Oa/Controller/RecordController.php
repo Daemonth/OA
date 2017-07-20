@@ -94,8 +94,6 @@ class RecordController extends BaseController
     //疑问查询首页
     public function serchqAction()
     {
-
-
         $where = array();
         $where4 = array();
         $formInfo = '';
@@ -131,26 +129,35 @@ class RecordController extends BaseController
             $in5->in('employeeId', array($v->employeeId));
             array_push($where4, $in5);
             $date = $this->common->getRecordTable()->getPaginator($where4);
-
+            $paginator3=array();
+            $paginator4=array();
             foreach ($date as $k => $d) {
 
                 $v->date = $d;
-                if ($v->date->daytype < 6) {
-                    $where2 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType1='emp' or updateType1='em')";
+                if ($v->date->daytype ==1) {
+                    $where2 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType1='emp' or updateType1='em') and daytype!=3 and daytype!=4";
                     $paginator3 = $this->common->getRecordTable()->fetchAll($where2)->toArray();
-                }
-                if ($v->date->daytype < 6) {
-                    $where3 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType2='emp' or updateType2='em')";
+                    $where3 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType2='emp' or updateType2='em') and daytype!=3 and daytype!=4";
                     $paginator4 = $this->common->getRecordTable()->fetchAll($where3)->toArray();
                 }
-                $where = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType1='B' or updateType1='C' or updateType1='D'or updateType1='F' or updateType1='00' or updateType1='L' or updateType1='M')";
-                $paginator1 = $this->common->getRecordTable()->fetchAll($where)->toArray();
-                $where1 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType2='B' or updateType2='C' or updateType2='D'or updateType2='F' or updateType2='00' or updateType2='L' or updateType2='M')";
-                $paginator2 = $this->common->getRecordTable()->fetchAll($where1)->toArray();
-                $v->count1 = count($paginator1);
-                $v->count2 = count($paginator2);
-                $v->count3 = count($paginator3);
-                $v->count4 = count($paginator4);
+                if ($v->date->daytype !==5){
+                    $where = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType1='C' or updateType1='D'or updateType1='F' or updateType1='00' or updateType1='L' or updateType1='M') and daytype!=3 and daytype!=4";
+                    $paginator1 = $this->common->getRecordTable()->fetchAll($where)->toArray();
+                    $where1 = "employeeId=" . $v->employeeId . " and signdate BETWEEN " . "'" . $firstday . "'" . " and " . "'" . $lastday . "'" . " and (updateType2='F' or updateType2='00' or updateType2='L' or updateType2='M') and daytype!=3 and daytype!=4";
+                    $paginator2 = $this->common->getRecordTable()->fetchAll($where1)->toArray();
+                }
+                if($v->role==6){
+                    $v->count1 = 0;
+                    $v->count2 = 0;
+                    $v->count3 = 0;
+                    $v->count4 = 0;
+                }else {
+                    $v->count1 = count($paginator1);
+                    $v->count2 = count($paginator2);
+                    $v->count3 = count($paginator3);
+                    $v->count4 = count($paginator4);
+                }
+
             }
         }
         return new ViewModel(array(
@@ -196,7 +203,6 @@ class RecordController extends BaseController
         $paginator->setCurrentPageNumber($pagenum);
 
         $paginator->setItemCountPerPage(1000);
-
 
         $in1 = new Where();
         $in1->in('employeeId', array($test));
@@ -270,13 +276,17 @@ class RecordController extends BaseController
             $summary[$i]['logicdays'] = $workdays;
             $summary[$i]['standard1'] = $standard->standard1;
             $summary[$i]['standard2'] = $standard->standard2;
-
+            $where1 = array();
+            $a = new Where();
+            $a->in('employeeId',array($value['employeeId']));
+            array_push($where1,$a);
+            $userR = $this->common->getUserTable()->fetchAll($where1)->toArray();
+            foreach ($userR as $h => $d){
+                $summary[$i]['role'] = $d['role'];
+            }
             $i++;
         }
-
-
         foreach ($userinfos as $key => $value) {
-
             //按员工号和日期查询出所有的数据
             $w = array();
             $where = new Where();
@@ -303,6 +313,14 @@ class RecordController extends BaseController
             $summary[$i]['job'] = $value['job'];
             $summary[$i]['workdays'] = $workdays;
             $summary[$i]['month'] = $month;
+            $where1 = array();
+            $a = new Where();
+            $a->in('employeeId',array($value['employeeId']));
+            array_push($where1,$a);
+            $userR = $this->common->getUserTable()->fetchAll($where1)->toArray();
+            foreach ($userR as $h => $d){
+                $summary[$i]['role'] = $d['role'];
+            }
             $logicdays = 0;
             $late1 = 0;
             $late2 = 0;
@@ -540,7 +558,6 @@ class RecordController extends BaseController
             $this->common->getReportTable()->saveAs($report);
 
         }
-
         return new ViewModel(array(
             'infos' => $paginator,
             'infos1' => $paginator1,
@@ -655,6 +672,7 @@ class RecordController extends BaseController
     }
 
 
+
     //删除操作
     public function deleteAction()
     {
@@ -670,16 +688,11 @@ class RecordController extends BaseController
     //调整工作日与法定假日
     public function adjustAction()
     {
-        if (!$this->getRequest()->isPost()) {
-            throw new \Oa\Exception\ErrorException('请以正确的方式访问');
-        }
         $day = $_POST['day'];
         $daytype = $_POST['type'];
-
         $records = $this->common->getRecordTable()->fetchAll(array('signdate' => $day))->toArray();
         if (!$records || empty($records)) {
             echo '没有该日期记录';
-            die();
         }
         $userInfo = $this->common->getUserTable()->fetchAll()->toArray();
         $userInfo = $this->common->array_column($userInfo, null, 'employeeId');
@@ -694,8 +707,6 @@ class RecordController extends BaseController
                     $this->common->getRecordTable()->logger->info("员工登录表中没有对应的员工号" . $v['employeeId']);
                     continue;
                 }
-
-
                 foreach ($v as $key => $value) {
                     if ($key == 'inputFilter') {
                         continue;
@@ -759,11 +770,9 @@ class RecordController extends BaseController
                         $recordRow->updateType1 = 'em';
                         $recordRow->updateType2 = 'em';
                     }
-
                     $this->common->getRecordTable()->saveAs($recordRow);
 
                 }
-
             }
             $conn->commit();
             echo 'success';
@@ -846,8 +855,6 @@ class RecordController extends BaseController
                     }
 
                     $updateType2 = $value['updateType2'];
-
-
                     if ($value['daytype'] == 1) {
                         if ($value['updateType2'] == 'F' || $value['updateType2'] == 'emp') {
                             $updateType2 = 'G';
@@ -856,7 +863,6 @@ class RecordController extends BaseController
                     } elseif ($value['daytype'] == 2) {
                         $updateType2 = 'N';
                     }
-
                     $data['updateType2'] = $updateType2;
                     $this->common->getRecordTable()->update($data, array('id' => $value['id']));
                 }

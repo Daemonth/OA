@@ -2,13 +2,12 @@
 function update(id,desc,num,params) {
 
     //alert($('#update1type'+id).val()+'---'+$('#update2type'+id).val()+'---'+num+'---'+$(desc).val());
-    url = 'http://localhost/wbysvn/OA/public/record/update';
+    url = '/record/update';
     data = {update1Type:$('#update1type'+id).val(),update2Type:$('#update2type'+id).val(),desc:$(desc).val(),id:id};
     $.post(url,data,function(text){
         $("#myAlert").alert();
         $("#myAlert").css({"display":"block"});
-       window.location.href = 'http://localhost/wbysvn/OA/public/record/listpage/'+employeeId;
-
+        window.location.href = '/record/listpage/'+employeeId;
     });
 
 }
@@ -81,7 +80,6 @@ function adjust() {
     if(!result) {
         return false ;
     }
-
     url = '/record/adjust';
     data = {'day':day,'type':type};
     $.post(url,data,function(text) {

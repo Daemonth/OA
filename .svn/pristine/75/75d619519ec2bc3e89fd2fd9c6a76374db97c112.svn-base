@@ -1,0 +1,14 @@
+<div class="title"><h4><b>原始信息上传</b></h4></div>
+
+<div style="margin: 20px">
+    <!--     上传原始表-->
+    <form action="<?php echo $this->url('oa/default',array('controller'=>'excel','action'=>'origin')); ?>" method="post" enctype="multipart/form-data" >
+        上传月份：<input type="text" name="date" readonly class='month'>&nbsp;
+        <input type="file" name="origin" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:inline">
+        <br/>
+        <br/>
+        <input class="btn btn-success" type="submit" value="点击上传" style="margin-left: 20px;display: inline">
+    </form>
+    <br/>
+    <span class="error">*只能上传后缀为.xls , .xlsx的文件，上传原始表前请确认员工登录信息和员工基本信息中已经添加新员工的信息，否则上传失败!</span>
+</div>

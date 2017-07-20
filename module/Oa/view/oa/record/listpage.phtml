@@ -59,14 +59,11 @@ $params .= empty($params) ? empty($name) ? null : '?' . $name : empty($name) ? n
             </tr>
             <?php
             if (!empty($infos)) {
-
                 $i = 0;
                 $typeArr = array();
                 $keys = array_keys($typeinfos);
                 foreach ($infos as $k => $v):
                     ?>
-
-
                     <tr>
                         <td width="100px" rowspan="3"
                             style="text-align: center;padding-top: 45px"><?php echo $v->signdate; ?>
@@ -74,14 +71,17 @@ $params .= empty($params) ? empty($name) ? null : '?' . $name : empty($name) ? n
                         </td>
 
                     </tr>
-
-                        <?php
-                        if ($v->updateType1=="em"){
+                    <?php
+                    if ($v->daytype != 3) {
+                        if ($v->updateType1 == "em") {
                             echo "<tr style='color: #a94442;background-color: #f2dede; border-color: #ebccd1;'>";
-                        }else{
+                        } else {
                             echo "<tr>";
                         }
-                        ?>
+                    }else{
+                        echo "<tr>";
+                    }
+                    ?>
                         <td>上</td>
                         <td>
                         <?php echo $v->time1?>                    
@@ -89,9 +89,9 @@ $params .= empty($params) ? empty($name) ? null : '?' . $name : empty($name) ? n
                        
                         <td><?php
                             $role = $user[$v->employeeId]['role'];
-                            if (($role == 1 || $role == 2) && $v->daytype == 1) {
+                            if (($role == 1 || $role == 2 || $role == 5 || $role == 6) && $v->daytype == 1) {
                                 $typeArr = array('A', 'B', 'C', 'D', 'E');
-                            } elseif (($role == 1 || $role == 2) && $v->daytype == 2) {
+                            } elseif (($role == 1 || $role == 2  || $role == 5 || $role == 6) && $v->daytype == 2) {
                                 $typeArr = array('J', 'K');
                             } elseif ($role == 3 && $v->daytype == 1) {
                                 $typeArr = array('O');
@@ -141,11 +141,14 @@ $params .= empty($params) ? empty($name) ? null : '?' . $name : empty($name) ? n
                         }
                         ?>
                     </tr>
-
                     <?php
-                    if ($v->updateType2=="em"){
-                        echo "<tr style='color: #a94442;background-color: #f2dede; border-color: #ebccd1;'>";
-                    }else{
+                    if ($v->daytype != 3) {
+                        if ($v->updateType2 == "em") {
+                            echo "<tr style='color: #a94442;background-color: #f2dede; border-color: #ebccd1;'>";
+                        } else {
+                            echo "<tr>";
+                        }
+                    } else {
                         echo "<tr>";
                     }
                     ?>
@@ -154,9 +157,9 @@ $params .= empty($params) ? empty($name) ? null : '?' . $name : empty($name) ? n
                         <td>
                             <?php
 
-                            if (($role == 1 || $role == 2) && $v->daytype == 1) {
+                            if (($role == 1 || $role == 2  || $role == 5 || $role == 6) && $v->daytype == 1) {
                                 $typeArr = array('F', 'G', 'H', 'I');
-                            } elseif (($role == 1 || $role == 2) && $v->daytype == 2) {
+                            } elseif (($role == 1 || $role == 2  || $role == 5 || $role == 6) && $v->daytype == 2) {
                                 $typeArr = array('L', 'M', 'N');
                             } elseif ($role == 3 && $v->daytype == 1) {
                                 $typeArr = array('P');

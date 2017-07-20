@@ -236,7 +236,6 @@ class BaseTable
             return $this->insert($data);
         } else {
             if ($this->fetchOne(array('id' => $id))) {
-
                 return $this->update($data, array('id' => $id));
             } else {
                 return false;

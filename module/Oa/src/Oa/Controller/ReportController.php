@@ -168,6 +168,14 @@ class ReportController extends BaseController
             $summary[$i]['logicdays'] = $workdays;
             $summary[$i]['standard1'] = $standard->standard1;
             $summary[$i]['standard2'] = $standard->standard2;
+            $where1 = array();
+            $a = new Where();
+            $a->in('employeeId',array($value['employeeId']));
+            array_push($where1,$a);
+            $userR = $this->common->getUserTable()->fetchAll($where1)->toArray();
+            foreach ($userR as $h => $d){
+                $summary[$i]['role'] = $d['role'];
+            }
             $i++;
         }
 
@@ -201,6 +209,14 @@ class ReportController extends BaseController
             $summary[$i]['job'] = $value['job'];
             $summary[$i]['workdays'] = $workdays;
             $summary[$i]['month'] = $month;
+            $where1 = array();
+            $a = new Where();
+            $a->in('employeeId',array($value['employeeId']));
+            array_push($where1,$a);
+            $userR = $this->common->getUserTable()->fetchAll($where1)->toArray();
+            foreach ($userR as $h => $d){
+                $summary[$i]['role'] = $d['role'];
+            }
 
             $logicdays = 0;
             $late1 = 0;
@@ -493,7 +509,11 @@ class ReportController extends BaseController
             $i = 0;
             $where = array();
             $data = array();
-            $pEmployee = $this->common->getUserTable()->fetchAll(array('role' => 1))->toArray();
+            $where3 = array();
+            $in4 = new Where();
+            $in4->in('role', array('1', '6'));
+            array_push($where3, $in4);
+            $pEmployee = $this->common->getUserTable()->fetchAll($where3)->toArray();
             foreach ($pEmployee as $k => $v) {
                 $in1 = new Where();
                 $in1->in('employeeId', array($v['employeeId']));
@@ -526,9 +546,7 @@ class ReportController extends BaseController
                 $j++;
             }
 
-
             $excel = new \PHPExcel();
-
             $excel->setActiveSheetIndex(0)->setTitle('普通员工考勤表');
             $excel->setActiveSheetIndex(0)
                 ->setCellValue('A1', '月份')
@@ -542,78 +560,120 @@ class ReportController extends BaseController
                 ->setCellValue('I1', '姓名')
                 ->setCellValue('J1', '工作日')
                 ->setCellValue('K1', '实际出勤日')
-                ->setCellValue('K1', '工作日出差')
-                ->setCellValue('L1', '迟到1')
-                ->setCellValue('M1', '迟到2')
-                ->setCellValue('N1', '早退')
-                ->setCellValue('O1', '周末值守')
-                ->setCellValue('P1', '节假日加班1')
-                ->setCellValue('Q1', '节假日加班2')
-                ->setCellValue('R1', '周末出差')
-                ->setCellValue('S1', '全勤奖')
-                ->setCellValue('T1', '晚补1')
-                ->setCellValue('U1', '晚9:30加班')
-                ->setCellValue('V1', '晚补2')
-                ->setCellValue('W1', '晚10:30加班')
-                ->setCellValue('X1', '加班补助合计')
-                ->setCellValue('Y1', '事假')
-                ->setCellValue('Z1', '年假')
-                ->setCellValue('AA1', '产假')
-                ->setCellValue('AB1', '病假')
-                ->setCellValue('AC1', '婚假')
-                ->setCellValue('AD1', '丧假')
-                ->setCellValue('AE1', '旷工')
-                ->setCellValue('AF1', '出差')
-                ->setCellValue('AG1', 'check')
+                ->setCellValue('L1', '工作日出差')
+                ->setCellValue('M1', '迟到1')
+                ->setCellValue('N1', '迟到2')
+                ->setCellValue('O1', '早退')
+                ->setCellValue('P1', '周末值守')
+                ->setCellValue('Q1', '节假日加班1')
+                ->setCellValue('R1', '节假日加班2')
+                ->setCellValue('S1', '周末出差')
+                ->setCellValue('T1', '全勤奖')
+                ->setCellValue('U1', '晚补1')
+                ->setCellValue('V1', '晚9:30加班')
+                ->setCellValue('W1', '晚补2')
+                ->setCellValue('X1', '晚10:30加班')
+                ->setCellValue('Y1', '加班补助合计')
+                ->setCellValue('Z1', '事假')
+                ->setCellValue('AA1', '年假')
+                ->setCellValue('AB1', '产假')
+                ->setCellValue('AC1', '病假')
+                ->setCellValue('AD1', '婚假')
+                ->setCellValue('AE1', '丧假')
+                ->setCellValue('AF1', '旷工')
+                ->setCellValue('AG1', '出差')
                 ->setCellValue('AH1', 'check')
-                ->setCellValue('AI1', '备注1')
-                ->setCellValue('AJ1', '备注2')
-                ->setCellValue('AK1', '备注3');
+                ->setCellValue('AI1', 'check')
+                ->setCellValue('AJ1', '备注1')
+                ->setCellValue('AK1', '备注2')
+                ->setCellValue('AL1', '备注3');
             $i = 2;
 
             foreach ($data as $key => $data1) {
                 foreach ($data1 as $value) {
-
-                    $excel->setActiveSheetIndex(0)
-                        ->setCellValue("A$i", $value['month'])
-                        ->setCellValue("B$i", $value['company'])
-                        ->setCellValue("C$i", $value['area'])
-                        ->setCellValue("D$i", $value['part1'])
-                        ->setCellValue("E$i", $value['part2'])
-                        ->setCellValue("F$i", $value['team'])
-                        ->setCellValue("G$i", $value['job'])
-                        ->setCellValue("H$i", $value['employeeId'])
-                        ->setCellValue("I$i", $value['name'])
-                        ->setCellValue("J$i", $value['workdays'])
-                        ->setCellValue("K$i", $value['logicdays'])
-                        ->setCellValue("K$i", $value['workaway'])
-                        ->setCellValue("L$i", $value['late1'])
-                        ->setCellValue("M$i", $value['late2'])
-                        ->setCellValue("N$i", $value['leavely'])
-                        ->setCellValue("O$i", $value['weekendwork'])
-                        ->setCellValue("P$i", $value['vacation1'])
-                        ->setCellValue("Q$i", $value['vacation2'])
-                        ->setCellValue("R$i", $value['weekendaway'])
-                        ->setCellValue("S$i", $value['bonus'])
-                        ->setCellValue("T$i", $value['standard1'])
-                        ->setCellValue("U$i", $value['overtime1'])
-                        ->setCellValue("V$i", $value['standard2'])
-                        ->setCellValue("W$i", $value['overtime2'])
-                        ->setCellValue("X$i", $value['total'])
-                        ->setCellValue("Y$i", $value['eventdays'])
-                        ->setCellValue("Z$i", $value['yeardays'])
-                        ->setCellValue("AA$i", $value['marrydays'])
-                        ->setCellValue("AB$i", $value['sickdays'])
-                        ->setCellValue("AC$i", $value['marrydays'])
-                        ->setCellValue("AD$i", $value['funeraldays'])
-                        ->setCellValue("AE$i", $value['absencedays'])
-                        ->setCellValue("AF$i", $value['outdays'])
-                        ->setCellValue("AG$i", $value['checkout'] == 1 ? 'true' : 'false')
-                        ->setCellValue("AH$i", $value['checkall'] == 0 ? 'true' : 'false')
-                        ->setCellValue("AI$i", $value['desc1'])
-                        ->setCellValue("AJ$i", $value['desc2'])
-                        ->setCellValue("AK$i", $value['desc3']);
-                    $i++;
+                    if ($value['role'] == 6) {
+                        $excel->setActiveSheetIndex(0)
+                            ->setCellValue("A$i", $value['month'])
+                            ->setCellValue("B$i", $value['company'])
+                            ->setCellValue("C$i", $value['area'])
+                            ->setCellValue("D$i", $value['part1'])
+                            ->setCellValue("E$i", $value['part2'])
+                            ->setCellValue("F$i", $value['team'])
+                            ->setCellValue("G$i", $value['job'])
+                            ->setCellValue("H$i", $value['employeeId'])
+                            ->setCellValue("I$i", $value['name'])
+                            ->setCellValue("J$i", $value['workdays'])
+                            ->setCellValue("K$i", $value['workdays'])
+                            ->setCellValue("L$i", $value['workaway'])
+                            ->setCellValue("M$i", $value['late1'])
+                            ->setCellValue("N$i", $value['late2'])
+                            ->setCellValue("O$i", $value['leavely'])
+                            ->setCellValue("P$i", $value['weekendwork'])
+                            ->setCellValue("Q$i", $value['vacation1'])
+                            ->setCellValue("R$i", $value['vacation2'])
+                            ->setCellValue("S$i", $value['weekendaway'])
+                            ->setCellValue("T$i", $value['bonus'])
+                            ->setCellValue("U$i", $value['standard1'])
+                            ->setCellValue("V$i", $value['overtime1'])
+                            ->setCellValue("W$i", $value['standard2'])
+                            ->setCellValue("X$i", $value['overtime2'])
+                            ->setCellValue("Y$i", $value['total'])
+                            ->setCellValue("Z$i", $value['eventdays'])
+                            ->setCellValue("AA$i", $value['yeardays'])
+                            ->setCellValue("AB$i", $value['marrydays'])
+                            ->setCellValue("AC$i", $value['sickdays'])
+                            ->setCellValue("AD$i", $value['marrydays'])
+                            ->setCellValue("AE$i", $value['funeraldays'])
+                            ->setCellValue("AF$i", $value['absencedays'])
+                            ->setCellValue("AG$i", $value['outdays'])
+                            ->setCellValue("AH$i", $value['checkout'] == 1 ? 'true' : 'false')
+                            ->setCellValue("AI$i", $value['checkall'] == 0 ? 'true' : 'false')
+                            ->setCellValue("AJ$i", $value['desc1'])
+                            ->setCellValue("AK$i", $value['desc2'])
+                            ->setCellValue("AL$i", $value['desc3']);
+                        $i++;
+                    } else {
+                        $excel->setActiveSheetIndex(0)
+                            ->setCellValue("A$i", $value['month'])
+                            ->setCellValue("B$i", $value['company'])
+                            ->setCellValue("C$i", $value['area'])
+                            ->setCellValue("D$i", $value['part1'])
+                            ->setCellValue("E$i", $value['part2'])
+                            ->setCellValue("F$i", $value['team'])
+                            ->setCellValue("G$i", $value['job'])
+                            ->setCellValue("H$i", $value['employeeId'])
+                            ->setCellValue("I$i", $value['name'])
+                            ->setCellValue("J$i", $value['workdays'])
+                            ->setCellValue("K$i", $value['logicdays'])
+                            ->setCellValue("L$i", $value['workaway'])
+                            ->setCellValue("M$i", $value['late1'])
+                            ->setCellValue("N$i", $value['late2'])
+                            ->setCellValue("O$i", $value['leavely'])
+                            ->setCellValue("P$i", $value['weekendwork'])
+                            ->setCellValue("Q$i", $value['vacation1'])
+                            ->setCellValue("R$i", $value['vacation2'])
+                            ->setCellValue("S$i", $value['weekendaway'])
+                            ->setCellValue("T$i", $value['bonus'])
+                            ->setCellValue("U$i", $value['standard1'])
+                            ->setCellValue("V$i", $value['overtime1'])
+                            ->setCellValue("W$i", $value['standard2'])
+                            ->setCellValue("X$i", $value['overtime2'])
+                            ->setCellValue("Y$i", $value['total'])
+                            ->setCellValue("Z$i", $value['eventdays'])
+                            ->setCellValue("AA$i", $value['yeardays'])
+                            ->setCellValue("AB$i", $value['marrydays'])
+                            ->setCellValue("AC$i", $value['sickdays'])
+                            ->setCellValue("AD$i", $value['marrydays'])
+                            ->setCellValue("AE$i", $value['funeraldays'])
+                            ->setCellValue("AF$i", $value['absencedays'])
+                            ->setCellValue("AG$i", $value['outdays'])
+                            ->setCellValue("AH$i", $value['checkout'] == 1 ? 'true' : 'false')
+                            ->setCellValue("AI$i", $value['checkall'] == 0 ? 'true' : 'false')
+                            ->setCellValue("AJ$i", $value['desc1'])
+                            ->setCellValue("AK$i", $value['desc2'])
+                            ->setCellValue("AL$i", $value['desc3']);
+                        $i++;
+                    }
                 }
             }
 
@@ -631,33 +691,33 @@ class ReportController extends BaseController
                 ->setCellValue('I1', '姓名')
                 ->setCellValue('J1', '工作日')
                 ->setCellValue('K1', '实际出勤日')
-                ->setCellValue('K1', '工作日出差')
-                ->setCellValue('L1', '迟到1')
-                ->setCellValue('M1', '迟到2')
-                ->setCellValue('N1', '早退')
-                ->setCellValue('O1', '周末值守')
-                ->setCellValue('P1', '节假日加班1')
-                ->setCellValue('Q1', '节假日加班2')
-                ->setCellValue('R1', '周末出差')
-                ->setCellValue('S1', '全勤奖')
-                ->setCellValue('T1', '晚补1')
-                ->setCellValue('U1', '晚9:30加班')
-                ->setCellValue('V1', '晚补2')
-                ->setCellValue('W1', '晚10:30加班')
-                ->setCellValue('X1', '加班补助合计')
-                ->setCellValue('Y1', '事假')
-                ->setCellValue('Z1', '年假')
-                ->setCellValue('AA1', '产假')
-                ->setCellValue('AB1', '病假')
-                ->setCellValue('AC1', '婚假')
-                ->setCellValue('AD1', '丧假')
-                ->setCellValue('AE1', '旷工')
-                ->setCellValue('AF1', '出差')
-                ->setCellValue('AG1', 'check')
+                ->setCellValue('L1', '工作日出差')
+                ->setCellValue('M1', '迟到1')
+                ->setCellValue('N1', '迟到2')
+                ->setCellValue('O1', '早退')
+                ->setCellValue('P1', '周末值守')
+                ->setCellValue('Q1', '节假日加班1')
+                ->setCellValue('R1', '节假日加班2')
+                ->setCellValue('S1', '周末出差')
+                ->setCellValue('T1', '全勤奖')
+                ->setCellValue('U1', '晚补1')
+                ->setCellValue('V1', '晚9:30加班')
+                ->setCellValue('W1', '晚补2')
+                ->setCellValue('X1', '晚10:30加班')
+                ->setCellValue('Y1', '加班补助合计')
+                ->setCellValue('Z1', '事假')
+                ->setCellValue('AA1', '年假')
+                ->setCellValue('AB1', '产假')
+                ->setCellValue('AC1', '病假')
+                ->setCellValue('AD1', '婚假')
+                ->setCellValue('AE1', '丧假')
+                ->setCellValue('AF1', '旷工')
+                ->setCellValue('AG1', '出差')
                 ->setCellValue('AH1', 'check')
-                ->setCellValue('AI1', '备注1')
-                ->setCellValue('AJ1', '备注2')
-                ->setCellValue('AK1', '备注3');
+                ->setCellValue('AI1', 'check')
+                ->setCellValue('AJ1', '备注1')
+                ->setCellValue('AK1', '备注2')
+                ->setCellValue('AL1', '备注3');
             $i = 2;
 
             foreach ($data2 as $key => $data3) {
@@ -675,33 +735,33 @@ class ReportController extends BaseController
                         ->setCellValue("I$i", $value['name'])
                         ->setCellValue("J$i", $value['workdays'])
                         ->setCellValue("K$i", $value['logicdays'])
-                        ->setCellValue("K$i", $value['workaway'])
-                        ->setCellValue("L$i", $value['late1'])
-                        ->setCellValue("M$i", $value['late2'])
-                        ->setCellValue("N$i", $value['leavely'])
-                        ->setCellValue("O$i", $value['weekendwork'])
-                        ->setCellValue("P$i", $value['vacation1'])
-                        ->setCellValue("Q$i", $value['vacation2'])
-                        ->setCellValue("R$i", $value['weekendaway'])
-                        ->setCellValue("S$i", $value['bonus'])
-                        ->setCellValue("T$i", $value['standard1'])
-                        ->setCellValue("U$i", $value['overtime1'])
-                        ->setCellValue("V$i", $value['standard2'])
-                        ->setCellValue("W$i", $value['overtime2'])
-                        ->setCellValue("X$i", $value['total'])
-                        ->setCellValue("Y$i", $value['eventdays'])
-                        ->setCellValue("Z$i", $value['yeardays'])
-                        ->setCellValue("AA$i", $value['marrydays'])
-                        ->setCellValue("AB$i", $value['sickdays'])
-                        ->setCellValue("AC$i", $value['marrydays'])
-                        ->setCellValue("AD$i", $value['funeraldays'])
-                        ->setCellValue("AE$i", $value['absencedays'])
-                        ->setCellValue("AF$i", $value['outdays'])
-                        ->setCellValue("AG$i", $value['checkout'] == 1 ? 'true' : 'false')
-                        ->setCellValue("AH$i", $value['checkall'] == 0 ? 'true' : 'false')
-                        ->setCellValue("AI$i", $value['desc1'])
-                        ->setCellValue("AJ$i", $value['desc2'])
-                        ->setCellValue("AK$i", $value['desc3']);
+                        ->setCellValue("L$i", $value['workaway'])
+                        ->setCellValue("M$i", $value['late1'])
+                        ->setCellValue("N$i", $value['late2'])
+                        ->setCellValue("O$i", $value['leavely'])
+                        ->setCellValue("P$i", $value['weekendwork'])
+                        ->setCellValue("Q$i", $value['vacation1'])
+                        ->setCellValue("R$i", $value['vacation2'])
+                        ->setCellValue("S$i", $value['weekendaway'])
+                        ->setCellValue("T$i", $value['bonus'])
+                        ->setCellValue("U$i", $value['standard1'])
+                        ->setCellValue("V$i", $value['overtime1'])
+                        ->setCellValue("W$i", $value['standard2'])
+                        ->setCellValue("X$i", $value['overtime2'])
+                        ->setCellValue("Y$i", $value['total'])
+                        ->setCellValue("Z$i", $value['eventdays'])
+                        ->setCellValue("AA$i", $value['yeardays'])
+                        ->setCellValue("AB$i", $value['marrydays'])
+                        ->setCellValue("AC$i", $value['sickdays'])
+                        ->setCellValue("AD$i", $value['marrydays'])
+                        ->setCellValue("AE$i", $value['funeraldays'])
+                        ->setCellValue("AF$i", $value['absencedays'])
+                        ->setCellValue("AG$i", $value['outdays'])
+                        ->setCellValue("AH$i", $value['checkout'] == 1 ? 'true' : 'false')
+                        ->setCellValue("AI$i", $value['checkall'] == 0 ? 'true' : 'false')
+                        ->setCellValue("AJ$i", $value['desc1'])
+                        ->setCellValue("AK$i", $value['desc2'])
+                        ->setCellValue("AL$i", $value['desc3']);
                     $i++;
                 }
             }

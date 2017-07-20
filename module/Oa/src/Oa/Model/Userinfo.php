@@ -45,7 +45,6 @@ class Userinfo extends BaseModel
                    
                  )
             ));
-            
              $this->inputFilter->add(array(
                 'name'=>'attendId',
                 'required'=>true,
@@ -69,23 +68,6 @@ class Userinfo extends BaseModel
                       )
                  )
              ));
-            $this->inputFilter->add(array(
-                'name'=>'identify',
-                'required'=>true,
-                'filters'=>array(
-                    array('name'=>'StringTrim'),
-                ),
-                'validators'=>array(
-                    array('name'=>'NotEmpty',
-                        'options'=>array(
-                            'message'=>array(
-                                '\Zend\Validator\NotEmpty::IS_EMPTY'=>'身份证不能为空',
-                            ),
-                        ),
-                    ),
-
-                )
-            ));
               $this->inputFilter->add(array(
                 'name'=>'name',
                 'required'=>true,
@@ -135,39 +117,6 @@ class Userinfo extends BaseModel
                     ),
                  )
               ));
-               $this->inputFilter->add(array(
-                'name'=>'part1',
-                'required'=>true,
-                'filters'=>array(
-                    array('name'=>'StringTrim'),
-                ),
-                 'validators'=>array(
-                    array('name'=>'NotEmpty',
-                     'options'=>array(
-                     'message'=>array(
-                         '\Zend\Validator\NotEmpty::IS_EMPTY'=>'部门不能为空',
-                     ),
-                     ),
-                    ),
-                 )
-               ));
-               $this->inputFilter->add(array(
-                'name'=>'company',
-                'required'=>true,
-                'filters'=>array(
-                    array('name'=>'StringTrim'),
-                ),
-                 'validators'=>array(
-                    array('name'=>'NotEmpty',
-                     'options'=>array(
-                     'message'=>array(
-                         '\Zend\Validator\NotEmpty::IS_EMPTY'=>'公司不能为空',
-                     ),
-                     ),
-                    ),
-                 )
-               ));
-               
         }
         
         return $this->inputFilter;

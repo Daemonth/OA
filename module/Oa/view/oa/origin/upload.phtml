@@ -3,7 +3,7 @@
 <div style="margin: 20px">
     <!--     上传原始表-->
     <form action="<?php echo $this->url('oa/default',array('controller'=>'excel','action'=>'origin')); ?>" method="post" enctype="multipart/form-data" >
-
+        上传月份：<input type="text" name="date" readonly class='month'>&nbsp;
         <input type="file" name="origin" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:inline">
         <br/>
         <br/>

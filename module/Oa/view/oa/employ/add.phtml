@@ -43,7 +43,7 @@
         
        <div class="input-group ">
             <span class="input-group-addon">一级部门</span>
-             <?php echo $this->formElement($form->get('part1')->setAttributes(array('class'=>'form-control','required'=>'required')));?>
+             <?php echo $this->formElement($form->get('part1')->setAttributes(array('class'=>'form-control')));?>
         </div>
         
        <div class="input-group ">
@@ -61,7 +61,7 @@
         </div>
         <div class="input-group ">
             <span class="input-group-addon">身份证</span>
-            <?php echo $this->formElement($form->get('identify')->setAttributes(array('class'=>'form-control js_identify','required'=>'required')));?>
+            <?php echo $this->formElement($form->get('identify')->setAttributes(array('class'=>'form-control js_identify')));?>
         </div>
         <div class="input-group ">
             <span class="input-group-addon">性别</span>
@@ -71,7 +71,7 @@
             <?php echo $this->formSubmit($form->get('submit')->setAttributes(array('class'=>'btn btn-success')));?>
         </div>
         <div class="error">
-            *员工号，考勤编号，姓名，地区，身份证号,一级部门,公司为必填项
+            *员工号，考勤编号，姓名，地区，公司为必填项
         </div><br/>
         <div id="showError" class="error">
             <?php if(!empty($_GET['errorMessage'])) {

@@ -20,14 +20,6 @@
 
 
 
-<div style="margin-left: 20px;margin-top: 60px">
-<span style="color: red">特殊情况统一修改操作入口，目前只限于下雨天修改9点半之前的情况</span>
 
- <form action="<?php echo $this->url('oa/default',array('controller'=>'record','action'=>'updatesp'));?>" method="get">
-        <label for="date">输入日期： </label><input type="text" name="starttime" readonly  class = 'date'
- <?php if(!empty($formInfo['starttime'])) echo "value=".$formInfo['starttime']; ?> >&nbsp;&nbsp;
-        
-        <input type="submit" value="修改" class="btn btn-info">
-    </form>
 
-</div>
+
